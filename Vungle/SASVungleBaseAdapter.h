@@ -11,10 +11,7 @@
 #import <VungleSDK/VungleSDK.h>
 
 #define SASVungleAdapterErrorDomain                         @"SASVungleAdapter"
-
 #define SASVungleAdapterErrorCodeInvalidParameterString     100
-
-#define SASCMPAdvertisingConsentStatusStorageKey            @"Smart_advertisingConsentStatus"
 
 NS_ASSUME_NONNULL_BEGIN
 

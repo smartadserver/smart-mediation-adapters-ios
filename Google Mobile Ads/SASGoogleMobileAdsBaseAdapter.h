@@ -15,7 +15,6 @@
 #define SASGoogleMobileAdsAdapterRewardedVideoExpiredOrAlreadyDisplayedErrorCode    2
 
 #define SASGoogleMobileAdsAdapterRequestAgent                                       @"SmartAdServer"
-#define SASCMPAdvertisingConsentStatusStorageKey                                    @"Smart_advertisingConsentStatus"
 
 
 NS_ASSUME_NONNULL_BEGIN

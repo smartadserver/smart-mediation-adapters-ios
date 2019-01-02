@@ -13,8 +13,6 @@
 #define SASAdColonyAdapterErrorDomain               @"SASAdColonyAdapter"
 #define SASAdColonyAdapterErrorCode                 1
 
-#define SASCMPAdvertisingConsentStatusStorageKey    @"Smart_advertisingConsentStatus"
-
 NS_ASSUME_NONNULL_BEGIN
 
 /**

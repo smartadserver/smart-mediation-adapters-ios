@@ -12,8 +12,6 @@
 
 #define SASAppLovinAdapterErrorDomain               @"SASAppLovinAdapter"
 
-#define SASCMPAdvertisingConsentStatusStorageKey    @"Smart_advertisingConsentStatus"
-
 NS_ASSUME_NONNULL_BEGIN
 
 /**

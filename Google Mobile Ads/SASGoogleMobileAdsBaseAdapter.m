@@ -43,9 +43,11 @@
     if ([[clientParameters objectForKey:SASMediationClientParameterGDPRApplies] boolValue]) {
         
         // Due to the fact that Google Mobile Ads is not IAB compliant, it does not accept IAB Consent String, but only a
-        // binary consent status. The Smart Display SDK will retrieve it from the NSUserDefault with the
-        // key "Smart_advertisingConsentStatus". Note that this is not an IAB requirement, so you have to set it by yourself.
-        NSString *storedBinaryConsentForAdvertising = [[NSUserDefaults standardUserDefaults] objectForKey:SASCMPAdvertisingConsentStatusStorageKey];
+        // binary consent status.
+        // Smart advises app developers to store the binary consent in the 'Smart_advertisingConsentStatus' key
+        // in NSUserDefault, therefore this adapter will retrieve it from this key.
+        // Adapt the code below if your app don't follow this convention.
+        NSString *storedBinaryConsentForAdvertising = [[NSUserDefaults standardUserDefaults] objectForKey:@"Smart_advertisingConsentStatus"];
         if (storedBinaryConsentForAdvertising && [storedBinaryConsentForAdvertising isEqualToString:@"1"]) {
             return nil;
         } else {
