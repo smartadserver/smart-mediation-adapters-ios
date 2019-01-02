@@ -34,8 +34,9 @@
     // Checking the GDPRApplies client parameter to know if asking for consent is relevant for this user.
     if ([[clientParameters objectForKey:SASMediationClientParameterGDPRApplies] boolValue]) {
         
-        // Consent is loaded from the binary consent key stored by SmartCMP.
-        // You can change the code below if you are using a different CMP solution.
+        // Due to the fact that Vungle is not IAB compliant, it does not accept IAB Consent String, but only a
+        // binary consent status. The Smart Display SDK will retrieve it from the NSUserDefault with the
+        // key "Smart_advertisingConsentStatus". Note that this is not an IAB requirement, so you have to set it by yourself.
         NSString *storedBinaryConsentForAdvertising = [[NSUserDefaults standardUserDefaults] objectForKey:SASCMPAdvertisingConsentStatusStorageKey];
         if (storedBinaryConsentForAdvertising && [storedBinaryConsentForAdvertising isEqualToString:@"1"]) {
             [[VungleSDK sharedSDK] updateConsentStatus:VungleConsentAccepted];

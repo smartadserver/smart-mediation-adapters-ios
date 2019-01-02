@@ -13,7 +13,7 @@
 #define SASAdinCubeAdapterErrorDomain               @"SASAdinCubeAdapter"
 #define SASAdinCubeAdapterNoFillErrorCode           @"NO_FILL"
 
-#define SASCMPAdvertisingConsentStatusStorageKey    @"SmartCMP_advertisingConsentStatus"
+#define SASCMPAdvertisingConsentStatusStorageKey    @"Smart_advertisingConsentStatus"
 
 NS_ASSUME_NONNULL_BEGIN
 

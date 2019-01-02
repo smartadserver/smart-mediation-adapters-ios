@@ -38,8 +38,9 @@ NS_ASSUME_NONNULL_BEGIN
     // Use binary consent for the moment, will use real consent string later.
     // options.gdprConsentString = [clientParameters objectForKey:SASMediationClientParameterGDPRConsent];
     
-    // Consent is loaded from the binary consent key stored by SmartCMP.
-    // You can change the code below if you are using a different CMP solution.
+    // Due to the fact that AdColony is not IAB compliant, it does not accept IAB Consent String, but only a
+    // binary consent status. The Smart Display SDK will retrieve it from the NSUserDefault with the
+    // key "Smart_advertisingConsentStatus". Note that this is not an IAB requirement, so you have to set it by yourself.
     NSString *storedBinaryConsentForAdvertising = [[NSUserDefaults standardUserDefaults] objectForKey:SASCMPAdvertisingConsentStatusStorageKey];
     if (storedBinaryConsentForAdvertising && [storedBinaryConsentForAdvertising isEqualToString:@"1"]) {
         options.gdprConsentString = @"1";
