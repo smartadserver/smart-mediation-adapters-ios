@@ -7,7 +7,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "MoPub.h"
 #import <SASDisplayKit/SASDisplayKit.h>
 
 #define SASMoPubAdapterErrorDomain              @"SASMoPubAdapter"

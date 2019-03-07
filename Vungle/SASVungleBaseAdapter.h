@@ -8,7 +8,6 @@
 
 #import <Foundation/Foundation.h>
 #import <SASDisplayKit/SASDisplayKit.h>
-#import <VungleSDK/VungleSDK.h>
 
 #define SASVungleAdapterErrorDomain                         @"SASVungleAdapter"
 #define SASVungleAdapterErrorCodeInvalidParameterString     100

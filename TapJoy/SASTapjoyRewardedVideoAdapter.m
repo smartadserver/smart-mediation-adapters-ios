@@ -7,8 +7,13 @@
 //
 
 #import "SASTapjoyRewardedVideoAdapter.h"
+#import <Tapjoy/Tapjoy.h>
 
 NS_ASSUME_NONNULL_BEGIN
+
+@interface SASTapjoyRewardedVideoAdapter () <TJPlacementDelegate, TJPlacementVideoDelegate>
+
+@end
 
 @implementation SASTapjoyRewardedVideoAdapter
 
@@ -85,7 +90,7 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - Tapjoy video delegate
 
 - (void)videoDidComplete:(TJPlacement *)placement {
-    // Using Smart server side reward since AdinCube don't provide any reward value
+    // Using Smart server side reward since Tapjoy don't provide any reward value
     [self.delegate mediationRewardedVideoAdapter:self didCollectReward:nil];
 }
 

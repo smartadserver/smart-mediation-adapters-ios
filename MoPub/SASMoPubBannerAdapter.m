@@ -7,8 +7,13 @@
 //
 
 #import "SASMoPubBannerAdapter.h"
+#import "MoPub.h"
 
 NS_ASSUME_NONNULL_BEGIN
+
+@interface SASMoPubBannerAdapter () <MPAdViewDelegate>
+
+@end
 
 @implementation SASMoPubBannerAdapter
 

@@ -7,6 +7,13 @@
 //
 
 #import "SASVungleRewardedVideoAdapter.h"
+#import <VungleSDK/VungleSDK.h>
+
+NS_ASSUME_NONNULL_BEGIN
+
+@interface SASVungleRewardedVideoAdapter () <VungleSDKDelegate>
+
+@end
 
 @implementation SASVungleRewardedVideoAdapter
 
@@ -75,7 +82,7 @@
     [self.delegate mediationRewardedVideoAdapter:self didFailToLoadWithError:error noFill:YES];
 }
 
-- (void)vungleAdPlayabilityUpdate:(BOOL)isAdPlayable placementID:(NSString *)placementID error:(NSError *)error {
+- (void)vungleAdPlayabilityUpdate:(BOOL)isAdPlayable placementID:(nullable NSString *)placementID error:(nullable NSError *)error {
     if (isAdPlayable && [placementID isEqualToString:self.placementID]) {
         // The interstitial is ready to display
         self.adIsReady = YES;
@@ -83,7 +90,7 @@
     }
 }
 
-- (void)vungleWillShowAdForPlacementID:(NSString *)placementID {
+- (void)vungleWillShowAdForPlacementID:(nullable NSString *)placementID {
     if ([placementID isEqualToString:self.placementID]) {
         [self.delegate mediationRewardedVideoAdapterDidShow:self];
     }
@@ -100,3 +107,5 @@
 }
 
 @end
+
+NS_ASSUME_NONNULL_END

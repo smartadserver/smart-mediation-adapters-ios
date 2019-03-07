@@ -7,7 +7,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <Tapjoy/Tapjoy.h>
 #import <SASDisplayKit/SASDisplayKit.h>
 
 #define SASTapjoyAdapterErrorDomain                         @"SASTapjoyAdapter"

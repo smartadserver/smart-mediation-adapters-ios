@@ -2,7 +2,36 @@
 
 This repository contains all mediation adapters we officially support.
 
-## Installation
+## Cocoapods installation
+
+You can install the __Smart Display SDK__, one or several mediation adapters and their related third party SDKs using _Cocoapods_.
+
+For that, simply declare the pod ```Smart-Display-SDK-With-Mediation``` in your _podfile_ (__instead of the regular Smart-Display-SDK__) with the appropriate _subspec_. For instance you can import _InMobi_ and _Tapjoy_ like so:
+
+```
+pod 'Smart-Display-SDK-With-Mediation/InMobi'
+pod 'Smart-Display-SDK-With-Mediation/Tapjoy'
+```
+
+Available _subspecs_ are:
+
+| Subspec name | Supported SDK version | Comments |
+| ------------ | --------------------- | -------- |
+| ```AdColony``` | ~> 3.3.0 | _n/a_ |
+| ```AdinCube``` | ~> 2.6.0 | _AdinCube_ adapter cannot be installed alongside the other adapters |
+| ```AppLovin``` | ~> 6.2.0 | _n/a_ |
+| ```FacebookAudienceNetwork``` | ~> 5.2.0 | _n/a_ |
+| ```GoogleMobileAds``` | ~> 7.39.0 | _n/a_ |
+| ```InMobi``` | ~> 7.2.0 | _n/a_ |
+| ```MoPub``` | ~> 5.5.0 | _n/a_ |
+| ```Tapjoy``` | ~> 12.2.0 | _n/a_ |
+| ```Vungle``` | ~> 6.2.0 | _n/a_ |
+
+__Note:__ if you install the pod _Smart-Display-SDK-With-Mediation_ without specifying any _subspec_, only the __Smart Display SDK__ will be installed.
+
+## Manual installation
+
+You can still install the adapters manually if needed:
 
 1. First make sure you have installed the __Smart Display SDK__. More information [here](http://documentation.smartadserver.com/DisplaySDK/ios/gettingstarted.html).
 

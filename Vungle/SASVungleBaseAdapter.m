@@ -7,8 +7,12 @@
 //
 
 #import "SASVungleBaseAdapter.h"
+#import <VungleSDK/VungleSDK.h>
+
+NS_ASSUME_NONNULL_BEGIN
 
 @interface SASVungleBaseAdapter () <VungleSDKDelegate>
+
 @end
 
 @implementation SASVungleBaseAdapter
@@ -55,3 +59,5 @@
 }
 
 @end
+
+NS_ASSUME_NONNULL_END

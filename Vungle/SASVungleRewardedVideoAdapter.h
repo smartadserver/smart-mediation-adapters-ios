@@ -8,6 +8,8 @@
 
 #import "SASVungleBaseAdapter.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  Vungle rewarded video adapter class for Smart SDK mediation.
  
@@ -17,9 +19,11 @@
  To use an adapter class, you simply have to add them to your Xcode project and they will
  be automatically instantiated by the Smart SDK if needed.
  */
-@interface SASVungleRewardedVideoAdapter : SASVungleBaseAdapter <SASMediationRewardedVideoAdapter, VungleSDKDelegate>
+@interface SASVungleRewardedVideoAdapter : SASVungleBaseAdapter <SASMediationRewardedVideoAdapter>
 
 /// A delegate that this adapter must call to provide information about the ad loading status or events to the Smart SDK.
 @property (nonatomic, weak) id<SASMediationRewardedVideoAdapterDelegate> delegate;
 
 @end
+
+NS_ASSUME_NONNULL_END

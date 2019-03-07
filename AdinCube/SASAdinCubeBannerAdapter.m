@@ -44,22 +44,18 @@ NS_ASSUME_NONNULL_BEGIN
     [self.delegate mediationBannerAdapter:self didLoadBanner:bannerView];
 }
 
-
 - (void)didFailToLoadBanner:(AdinCubeBannerView *)bannerView withError:(NSString *)errorCode {
     NSError *error = [NSError errorWithDomain:SASAdinCubeAdapterErrorDomain code:[errorCode integerValue] userInfo:@{ NSLocalizedDescriptionKey: [NSString stringWithFormat:@"AdInCube Banner Error: %@", errorCode] }];
     [self.delegate mediationBannerAdapter:self didFailToLoadWithError:error noFill:[errorCode isEqualToString:SASAdinCubeAdapterNoFillErrorCode]];
 }
 
-
 - (void)didShowBanner:(AdinCubeBannerView *)bannerView {
     // Nothing to do here
 }
 
-
 - (void)didFailToShowBanner:(AdinCubeBannerView *)bannerView withError:(NSString*)errorCode {
     // Nothing to do here
 }
-
 
 - (void)didClickOnBanner:(AdinCubeBannerView *)bannerView {
     [self.delegate mediationBannerAdapterDidReceiveAdClickedEvent:self];

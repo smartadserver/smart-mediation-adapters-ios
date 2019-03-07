@@ -7,6 +7,7 @@
 //
 
 #import "SASMoPubBaseAdapter.h"
+#import "MoPub.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

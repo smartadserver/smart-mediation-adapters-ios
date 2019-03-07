@@ -41,7 +41,9 @@ NS_ASSUME_NONNULL_BEGIN
     
     // Loading ad…
     self.native = [[AdinCubeNative alloc] init];
-    [self.native load:self];
+    
+    AdinCubeNativeAdOptions *options = [[[[AdinCubeNativeAdOptions newBuilder] withNbAds:1] usesMediaViewForCover] build];
+    [self.native loadWithOptions:options delegate:self];
 }
 
 - (void)registerView:(UIView *)view tappableViews:(nullable NSArray *)tappableViews overridableViews:(NSDictionary *)overridableViews fromViewController:(UIViewController *)viewController {
