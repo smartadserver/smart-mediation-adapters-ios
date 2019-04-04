@@ -30,7 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
     }
 }
 
-- (void)initializeMoPubSDK:(void(^)())completionBlock {
+- (void)initializeMoPubSDK:(void(^)(void))completionBlock {
     if ([[MoPub sharedInstance] isSdkInitialized]) {
         completionBlock();
     } else {

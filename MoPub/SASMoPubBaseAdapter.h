@@ -52,7 +52,7 @@ NS_ASSUME_NONNULL_BEGIN
  
  @param completionBlock A block that will be called when the SDK is initialized properly.
  */
-- (void)initializeMoPubSDK:(void(^)())completionBlock;
+- (void)initializeMoPubSDK:(void(^)(void))completionBlock;
 
 @end
 
