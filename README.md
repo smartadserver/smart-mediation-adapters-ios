@@ -23,7 +23,7 @@ Available _subspecs_ are:
 | ```FacebookAudienceNetwork``` | ~> 5.2.0 | _n/a_ |
 | ```GoogleMobileAds``` | ~> 7.39.0 | _n/a_ |
 | ```InMobi``` | ~> 7.2.0 | _n/a_ |
-| ```MoPub``` | ~> 5.5.0 | _n/a_ |
+| ```MoPub``` | ~> 5.6.0 | _n/a_ |
 | ```Tapjoy``` | ~> 12.2.0 | _n/a_ |
 | ```Vungle``` | ~> 6.2.0 | _n/a_ |
 
