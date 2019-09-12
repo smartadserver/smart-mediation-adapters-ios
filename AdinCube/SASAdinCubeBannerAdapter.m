@@ -29,13 +29,31 @@ NS_ASSUME_NONNULL_BEGIN
     [self configureGDPRWithClientParameters:clientParameters];
     
     // Loading ad…
-    self.bannerView = [[AdinCube Banner] createView:[self adSize] rootViewController:viewController];
+    self.bannerView = [[AdinCube Banner] createView:[self bannerSize:serverParameterString] rootViewController:viewController];
     self.bannerView.delegate = self;
     [self.bannerView load];
 }
 
-- (AdinCubeBannerSize)adSize {
-    return AdinCubeBannerSizeAuto;
+#pragma mark - AdinCube banner size util method
+
+- (AdinCubeBannerSize)bannerSize:(NSString *)serverParameterString {
+    // IDs are sent as a slash separated string
+    NSArray *serverParameters = [serverParameterString componentsSeparatedByString:@"|"];
+    NSInteger bannerSizeIndex = 0;
+    if ([serverParameters count] > 1) {
+        // Extracting banner size
+        bannerSizeIndex = ((NSString *)serverParameters[1]).integerValue;
+    }
+    switch (bannerSizeIndex) {
+        case 1:
+            return AdinCubeBannerSize320x50;
+        case 2:
+            return AdinCubeBannerSize300x250;
+        case 3:
+            return AdinCubeBannerSize728x90;
+        default:
+            return AdinCubeBannerSizeAuto;
+    }
 }
 
 #pragma mark - AdinCube banner delegate
