@@ -9,17 +9,27 @@
 #import "SASGoogleMobileAdsBaseAdapter.h"
 #import <CoreLocation/CoreLocation.h>
 
+#define GMA_AD_MANAGER_KEY @"admanager"
+
 
 @implementation SASGoogleMobileAdsBaseAdapter
 
-+ (void)initializeGoogleMobileAdsWithApplicationID:(NSString *)applicationID {
+- (id)init {
+    if (self = [super init]) {
+        self.googleMobileAdsInitStatus = GoogleMobileAdsTypeNotInitialized;
+    }
+    return self;
+}
+
++ (void)initializeGoogleMobileAds {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        [GADMobileAds configureWithApplicationID:applicationID];
+        // appId is not used anymore as it shoud be set directly in the app Info.plist, we keep it for retro compatibility
+        [[GADMobileAds sharedInstance] startWithCompletionHandler:nil];
     });
 }
 
-- (BOOL)configureIDWithServerParameterString:(NSString *)serverParameterString error:(NSError **)error {
+- (GoogleMobileAdsType)configureGoogleMobileAdsWithServerParameterString:(NSString *)serverParameterString error:(NSError **)error {
     // IDs are sent as a slash separated string
     NSArray *serverParameters = [serverParameterString componentsSeparatedByString:@"|"];
     
@@ -28,14 +38,21 @@
         *error = [NSError errorWithDomain:SASGoogleMobileAdsAdapterErrorDomain
                                      code:SASGoogleMobileAdsAdapterErrorCode
                                  userInfo:@{ NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Invalid server parameter string: %@", serverParameterString] }];
-        return NO;
+        return GoogleMobileAdsTypeNotInitialized;
     }
     
     // Extracting and converting parameters
-    self.applicationID = serverParameters[0];
+    NSString *appID = serverParameters[0];
     self.adUnitID = serverParameters[1];
     
-    return YES;
+    if ([appID isEqualToString:GMA_AD_MANAGER_KEY]) {
+        self.googleMobileAdsInitStatus = GoogleMobileAdsTypeAdManager;
+    } else {
+        [SASGoogleMobileAdsBaseAdapter initializeGoogleMobileAds];
+        self.googleMobileAdsInitStatus = GoogleMobileAdsTypeAdMob;
+    }
+    
+    return self.googleMobileAdsInitStatus;
 }
 
 - (nullable NSDictionary *)additionalParametersFromClientParameters:(NSDictionary *)clientParameters; {
@@ -63,11 +80,14 @@
 }
 
 - (GADRequest *)requestWithClientParameters:(NSDictionary *)clientParameters {
-    // Initialize the SDK
-    [SASGoogleMobileAdsBaseAdapter initializeGoogleMobileAdsWithApplicationID:self.applicationID];
-    
+
+    GADRequest *request;
     // Creating an Google Mobile Ads ad request
-    GADRequest *request = [GADRequest request];
+    if (self.googleMobileAdsInitStatus == GoogleMobileAdsTypeAdMob) {
+        request = [GADRequest request];
+    } else if (self.googleMobileAdsInitStatus == GoogleMobileAdsTypeAdManager) {
+        request = [DFPRequest request];
+    }
     
     // Test ads will be returned for devices with device IDs specified in this array.
     request.testDevices = @[ kGADSimulatorID /* other UDIDs here */];
@@ -90,5 +110,6 @@
 
     return request;
 }
+
 
 @end

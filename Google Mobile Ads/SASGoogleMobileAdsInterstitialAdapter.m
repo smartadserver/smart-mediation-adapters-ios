@@ -28,20 +28,30 @@ NS_ASSUME_NONNULL_BEGIN
     
     // Parameter retrieval and validation
     NSError *error = nil;
-    if (![self configureIDWithServerParameterString:serverParameterString error:&error]) {
+    GoogleMobileAdsType gmaType = [self configureGoogleMobileAdsWithServerParameterString:serverParameterString error:&error];
+    
+    if (GoogleMobileAdsTypeNotInitialized == gmaType) {
         // Configuration can fail if the serverParameterString is invalid
         [self.delegate mediationInterstitialAdapter:self didFailToLoadWithError:error noFill:NO];
         return;
     }
     
-    // Loading the ad
-    self.interstitial = [[GADInterstitial alloc] initWithAdUnitID:self.adUnitID];
-    self.interstitial.delegate = self;
+    if (GoogleMobileAdsTypeAdMob == gmaType) {
+        // Create Google Interstitial
+        self.interstitial = [[GADInterstitial alloc] initWithAdUnitID:self.adUnitID];
+    } else if (GoogleMobileAdsTypeAdManager == gmaType) {
+        // Create Google DFP Interstitial
+        self.interstitial =  [[DFPInterstitial alloc] initWithAdUnitID:self.adUnitID];
+    }
     
+    self.interstitial.delegate = self;
+
+    // Create Google Ad Request
     GADRequest *request = [self requestWithClientParameters:clientParameters];
     
+    // Perform ad request
     [self.interstitial loadRequest:request];
-    
+   
 }
 
 - (void)showInterstitialFromViewController:(UIViewController *)viewController {

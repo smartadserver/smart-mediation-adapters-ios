@@ -25,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// A delegate that this adapter must call to provide information about the ad loading status or events to the Smart SDK.
 @property (nonatomic, weak) id<SASMediationBannerAdapterDelegate> delegate;
 
-/// The currently loaded Google Mobile Ads interstitial if any.
+/// The currently loaded Google Mobile Ads banner if any.
 @property (nonatomic, strong, nullable) GADBannerView *bannerView;
 
 @end

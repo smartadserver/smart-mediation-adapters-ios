@@ -16,6 +16,13 @@
 
 #define SASGoogleMobileAdsAdapterRequestAgent                                       @"SmartAdServer"
 
+/// Enum that defines all the possible Google Mobile Ads type at initialization.
+typedef NS_ENUM(NSInteger, GoogleMobileAdsType) {
+    GoogleMobileAdsTypeNotInitialized = 0,
+    GoogleMobileAdsTypeAdMob          = 1,
+    GoogleMobileAdsTypeAdManager      = 2,
+};
+
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -30,6 +37,9 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface SASGoogleMobileAdsBaseAdapter : NSObject
 
+/// Google Mobile Ads init status
+@property (nonatomic, assign) GoogleMobileAdsType googleMobileAdsInitStatus;
+
 /// Google Mobile Ads Application ID.
 @property (nonatomic, strong, nullable) NSString *applicationID;
 
@@ -41,19 +51,19 @@ NS_ASSUME_NONNULL_BEGIN
  
  This method will only initialize the SDK once, no matter how many time it is called.
  */
-+ (void)initializeGoogleMobileAdsWithApplicationID:(NSString *)applicationID;
++ (void)initializeGoogleMobileAds;
 
 /**
- Method called to initialize Google Mobile Ads IDs from the server parameter string provided by Smart.
+ Method called to configure Google Mobile Ads IDs from the server parameter string provided by Smart.
  
- This method will fail with error if the ID can't be retrieved, in this case no ad call should
- be performed.
+ This method can fail and return GoogleMobileAdsTypeNotInitialized and an error, in this case no ad
+ call should be performed.
  
  @param serverParameterString The server parameter string provided by Smart.
- @param error A reference to a NSError that will be filled if the method fails (and returns NO).
- @return YES if the configuration is successful, NO otherwise.
+ @param error A reference to a NSError that will be filled if the method fails (and returns GoogleMobileAdsTypeNotInitialized).
+ @return The Google Mobile Ads type after configuration.
  */
-- (BOOL)configureIDWithServerParameterString:(NSString *)serverParameterString error:(NSError **)error;
+- (GoogleMobileAdsType)configureGoogleMobileAdsWithServerParameterString:(NSString *)serverParameterString error:(NSError **)error;
 
 /**
  Return a dictionary of additional parameters that will include GDPR information.

@@ -26,22 +26,27 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (void)requestRewardedVideoWithServerParameterString:(nonnull NSString *)serverParameterString clientParameters:(nonnull NSDictionary *)clientParameters { 
+    
     // Previous state is reset if any
     self.rewarded = nil;
     
     // Parameter retrieval and validation
     NSError *error = nil;
-    if (![self configureIDWithServerParameterString:serverParameterString error:&error]) {
+    GoogleMobileAdsType gma = [self configureGoogleMobileAdsWithServerParameterString:serverParameterString error:&error];
+
+    if (GoogleMobileAdsTypeNotInitialized == gma) {
         // Configuration can fail if the serverParameterString is invalid
         [self.delegate mediationRewardedVideoAdapter:self didFailToLoadWithError:error noFill:NO];
         return;
     }
     
-    // Loading the ad
+    // Create Google Rewarded Video
     self.rewarded = [GADRewardBasedVideoAd sharedInstance];
     self.rewarded.delegate = self;
 
+    // Create Google Ad Request
     GADRequest *request = [self requestWithClientParameters:clientParameters];
+    
     [self.rewarded loadRequest:request withAdUnitID:self.adUnitID];
 }
 

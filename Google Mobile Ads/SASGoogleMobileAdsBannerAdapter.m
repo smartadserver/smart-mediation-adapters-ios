@@ -28,20 +28,30 @@ NS_ASSUME_NONNULL_BEGIN
     
     // Parameter retrieval and validation
     NSError *error = nil;
-    if (![self configureIDWithServerParameterString:serverParameterString error:&error]) {
+    GoogleMobileAdsType gmaType = [self configureGoogleMobileAdsWithServerParameterString:serverParameterString error:&error];
+    
+    if (GoogleMobileAdsTypeNotInitialized == gmaType) {
         // Configuration can fail if the serverParameterString is invalid
         [self.delegate mediationBannerAdapter:self didFailToLoadWithError:error noFill:NO];
         return;
     }
     
-    // Loading the ad
-    self.bannerView = [[GADBannerView alloc] initWithAdSize:kGADAdSizeBanner];
+    if (GoogleMobileAdsTypeAdMob == gmaType) {
+        // Create Google Banner View and configure it.
+        self.bannerView = [[GADBannerView alloc] initWithAdSize:kGADAdSizeBanner];
+    } else if (GoogleMobileAdsTypeAdManager == gmaType) {
+        // Create Google DFP Banner View and configure it.
+        self.bannerView =  [[DFPBannerView alloc] initWithAdSize:kGADAdSizeSmartBannerPortrait];
+    }
+    
     self.bannerView.delegate = self;
     self.bannerView.adUnitID = self.adUnitID;
     self.bannerView.rootViewController = viewController;
-    
+
+    // Create Google Ad Request
     GADRequest *request = [self requestWithClientParameters:clientParameters];
     
+    // Perform ad request
     [self.bannerView loadRequest:request];
 }
 
