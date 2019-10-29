@@ -36,9 +36,6 @@ NS_ASSUME_NONNULL_BEGIN
     // Configuring Application ID is done in the base class
     [self configureApplicationIDWithServerParameterString:serverParameterString];
     
-    // Configuring GDPR is done in the base class
-    [self configureGDPRWithClientParameters:clientParameters];
-    
     // Loading ad…
     self.native = [[AdinCubeNative alloc] init];
     

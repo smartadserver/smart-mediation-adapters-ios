@@ -26,6 +26,20 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface SASAdinCubeBaseAdapter : NSObject
 
+/// An IAB string that will be forwarded to AdinCube SDK.
+///
+/// Notes:
+/// - this will only be forwarded to AdinCube SDK if 'nonIABVendorsAccepted' is not nil as well
+/// - you can find more info here: https://intelligentmonetization.ogury.co/dashboard/#/docs/ios/objective-c?networks=26226be-26226be#ogury-choice-manager
+@property (class, nonatomic, copy, nullable) NSString *IABString;
+
+/// An array of non IAB vendors with accepted consent that will be forwarded to AdinCube SDK.
+///
+/// Notes:
+/// - this will only be forwarded to AdinCube SDK if 'IABString' is not nil as well
+/// - you can find more info here: https://intelligentmonetization.ogury.co/dashboard/#/docs/ios/objective-c?networks=26226be-26226be#ogury-choice-manager
+@property (class, nonatomic, copy, nullable) NSArray<NSString *> *nonIABVendorsAccepted;
+
 /// AdinCube application ID.
 @property (nonatomic, copy, nullable) NSString *applicationID;
 
@@ -36,14 +50,6 @@ NS_ASSUME_NONNULL_BEGIN
  @param serverParameterString The server parameter string provided by Smart.
  */
 - (void)configureApplicationIDWithServerParameterString:(NSString *)serverParameterString;
-
-/**
- Configure GDPR for AdinCube SDK from the client parameters dictionary provided by the
- Smart SDK.
- 
- @param clientParameters The client parameters dictionary provided by Smart.
- */
-- (void)configureGDPRWithClientParameters:(NSDictionary *)clientParameters;
 
 @end
 

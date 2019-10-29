@@ -10,7 +10,30 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+static NSString * _Nullable _IABString = nil;
+static NSArray<NSString *> * _Nullable _nonIABVendorsAccepted = nil;
+
 @implementation SASAdinCubeBaseAdapter
+
+#pragma mark - Static properties
+
++ (nullable NSString *)IABString {
+    return _IABString;
+}
+
++ (void)setIABString:(nullable NSString *)IABString {
+    _IABString = IABString;
+}
+
++ (nullable NSArray<NSString *> *)nonIABVendorsAccepted {
+    return _nonIABVendorsAccepted;
+}
+
++ (void)setNonIABVendorsAccepted:(nullable NSArray<NSString *> *)nonIABVendorsAccepted {
+    _nonIABVendorsAccepted = nonIABVendorsAccepted;
+}
+
+#pragma mark - Base class methods
 
 - (void)configureApplicationIDWithServerParameterString:(NSString *)serverParameterString {
     // IDs are sent as a slash separated string
@@ -19,31 +42,23 @@ NS_ASSUME_NONNULL_BEGIN
     // Extracting applicationID
     self.applicationID = serverParameters[0];
     [AdinCube setAppKey:self.applicationID];
-}
-
-
-- (void)configureGDPRWithClientParameters:(NSDictionary *)clientParameters {
-    // Checking the GDPRApplies client parameter to know if asking for consent is relevant for this user.
-    if ([[clientParameters objectForKey:SASMediationClientParameterGDPRApplies] boolValue]) {
-        
-        // Due to the fact that AdinCube is not IAB compliant, it does not accept IAB Consent String, but only a
-        // binary consent status.
-        // Smart advises app developers to store the binary consent in the 'Smart_advertisingConsentStatus' key
-        // in NSUserDefault, therefore this adapter will retrieve it from this key.
-        // Adapt the code below if your app don't follow this convention.
-        NSString *storedBinaryConsentForAdvertising = [[NSUserDefaults standardUserDefaults] objectForKey:@"Smart_advertisingConsentStatus"];
-        if (storedBinaryConsentForAdvertising && [storedBinaryConsentForAdvertising isEqualToString:@"1"]) {
-            [[AdinCube UserConsent] setAccepted];
-        } else {
-            [[AdinCube UserConsent] setDeclined];
-        }
-        
-    } else {
-        
-        // If GDPR does not apply, AdinCube user consent can be set to accepted.
-        [[AdinCube UserConsent] setAccepted];
-        
+    
+    // The adapter will automatically handles consent forwarding to AdinCube if:
+    // - you have provided 'IABString' & 'nonIABVendorsAccepted' to SASAdinCubeBaseAdapter (formatted as described in the Ogury's documentation)
+    // - your application is whitelisted by Ogury.
+    //
+    // You can find more information in Ogury's documentation:
+    // https://intelligentmonetization.ogury.co/dashboard/#/docs/ios/objective-c?networks=26226be-26226be#third-party-consent
+    if (SASAdinCubeBaseAdapter.IABString != nil && SASAdinCubeBaseAdapter.nonIABVendorsAccepted != nil) {
+        [AdinCube.UserConsent.External setConsentWithIABString:SASAdinCubeBaseAdapter.IABString andNonIABVendorsAccepted:SASAdinCubeBaseAdapter.nonIABVendorsAccepted];
     }
+    
+    // Note:
+    // If you don't provide 'IABString' & 'nonIABVendorsAccepted' or if you aren't whitelisted by Ogury, you
+    // will need to use 'Ogury Choice Manager' and you will need to implement it by yourself.
+    //
+    // You can find more information about 'Ogury Choice Manager' in Ogury's documentation:
+    // https://intelligentmonetization.ogury.co/dashboard/#/docs/ios/objective-c?networks=26226be-26226be#ogury-choice-manager
 }
 
 @end

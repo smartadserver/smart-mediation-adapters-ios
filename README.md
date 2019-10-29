@@ -18,7 +18,7 @@ Available _subspecs_ are:
 | Subspec name | Supported SDK version | Comments |
 | ------------ | --------------------- | -------- |
 | ```AdColony``` | ~> 3.3.0 | _n/a_ |
-| ```AdinCube``` | ~> 2.6.0 | _AdinCube_ adapter cannot be installed alongside the other adapters |
+| ```AdinCube``` | ~> 2.9.4 | _AdinCube_ adapter cannot be installed alongside the other adapters |
 | ```AppLovin``` | ~> 6.2.0 | _n/a_ |
 | ```FacebookAudienceNetwork``` | ~> 5.2.0 | _n/a_ |
 | ```GoogleMobileAds``` | ~> 7.50.0 | _n/a_ |
