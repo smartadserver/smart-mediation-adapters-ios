@@ -9,10 +9,16 @@
 #import <Foundation/Foundation.h>
 #import <SASDisplayKit/SASDisplayKit.h>
 
-#define SASTapjoyAdapterErrorDomain                         @"SASTapjoyAdapter"
+#define SASTapjoyAdapterErrorDomain                             @"SASTapjoyAdapter"
 
-#define SASTapjoyAdapterErrorCodeInvalidParameterString      100
-#define SASTapjoyAdapterErrorCodeUnableToConnect             200
+#define SASTapjoyAdapterErrorCodeInvalidParameterString         100
+#define SASTapjoyAdapterErrorCodeUnableToConnect                200
+
+#define SASTapjoyAdapterErrorCodeFailedToLoadInterstitialAd     300
+#define SASTapjoyAdapterErrorMessageFailedToLoadInterstitialAd  @"No Tapjoy interstitial available"
+
+#define SASTapjoyAdapterErrorCodeFailedToLoadRewardedAd         400
+#define SASTapjoyAdapterErrorMessageFailedToLoadRewardedAd      @"No Tapjoy rewarded video available"
 
 NS_ASSUME_NONNULL_BEGIN
 

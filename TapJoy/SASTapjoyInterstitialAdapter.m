@@ -66,12 +66,16 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - Tapjoy events
 
 - (void)requestDidSucceed:(TJPlacement *)placement {
-    // Waiting for the content to be ready before calling the 'didLoad' delegate…
+    if (![placement isContentAvailable]) {
+        NSError *error = [NSError errorWithDomain:SASTapjoyAdapterErrorDomain
+                                             code:SASTapjoyAdapterErrorCodeFailedToLoadInterstitialAd
+                                         userInfo:@{NSLocalizedDescriptionKey: SASTapjoyAdapterErrorMessageFailedToLoadInterstitialAd}];
+        [self.delegate mediationInterstitialAdapter:self didFailToLoadWithError:error noFill:YES];
+    }
 }
 
 - (void)requestDidFail:(TJPlacement *)placement error:(NSError *)error {
-    [self.delegate mediationInterstitialAdapter:self didFailToLoadWithError:error noFill:YES];
-    // Since there is no documented way to know if the error is due to a 'no fill', we send YES for this parameter
+    [self.delegate mediationInterstitialAdapter:self didFailToLoadWithError:error noFill:NO];
 }
 
 - (void)contentIsReady:(TJPlacement *)placement {
