@@ -34,7 +34,7 @@
     NSArray *serverParameters = [serverParameterString componentsSeparatedByString:@"|"];
     
     // Invalid parameter string, the loading will be cancelled with an error
-    if (serverParameters.count != 2) {
+    if (serverParameters.count != 2 && serverParameters.count != 3) {
         *error = [NSError errorWithDomain:SASGoogleMobileAdsAdapterErrorDomain
                                      code:SASGoogleMobileAdsAdapterErrorCode
                                  userInfo:@{ NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Invalid server parameter string: %@", serverParameterString] }];

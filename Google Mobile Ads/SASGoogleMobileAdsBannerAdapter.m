@@ -35,13 +35,14 @@ NS_ASSUME_NONNULL_BEGIN
         [self.delegate mediationBannerAdapter:self didFailToLoadWithError:error noFill:NO];
         return;
     }
-    
+    GADAdSize adSize = [self bannerSize:serverParameterString];
     if (GoogleMobileAdsTypeAdMob == gmaType) {
         // Create Google Banner View and configure it.
-        self.bannerView = [[GADBannerView alloc] initWithAdSize:kGADAdSizeBanner];
+        self.bannerView = [[GADBannerView alloc] initWithAdSize:adSize];
+
     } else if (GoogleMobileAdsTypeAdManager == gmaType) {
         // Create Google DFP Banner View and configure it.
-        self.bannerView =  [[DFPBannerView alloc] initWithAdSize:kGADAdSizeSmartBannerPortrait];
+        self.bannerView =  [[DFPBannerView alloc] initWithAdSize:adSize];
     }
     
     self.bannerView.delegate = self;
@@ -54,6 +55,27 @@ NS_ASSUME_NONNULL_BEGIN
     // Perform ad request
     [self.bannerView loadRequest:request];
 }
+
+#pragma mark - GMA Banner size util method
+
+- (GADAdSize)bannerSize:(NSString *)serverParameterString {
+    // IDs are sent as a slash separated string
+    NSArray *serverParameters = [serverParameterString componentsSeparatedByString:@"|"];
+    NSInteger bannerSizeIndex = 0;
+    if ([serverParameters count] > 2) {
+        // Extracting banner size
+        bannerSizeIndex = ((NSString *)serverParameters[2]).integerValue;
+    }
+    switch (bannerSizeIndex) {
+        case 1:
+            return kGADAdSizeMediumRectangle;
+        case 2:
+            return kGADAdSizeLeaderboard;
+        default:
+            return kGADAdSizeBanner;
+    }
+}
+
 
 #pragma mark - GMA Banner View Delegate
 
