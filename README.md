@@ -21,7 +21,7 @@ Available _subspecs_ are:
 | ```AdinCube``` | ~> 2.9.4 | _AdinCube_ adapter cannot be installed alongside the other adapters |
 | ```AppLovin``` | ~> 6.2.0 | _n/a_ |
 | ```FacebookAudienceNetwork``` | ~> 5.2.0 | _n/a_ |
-| ```GoogleMobileAds``` | ~> 7.50.0 | _n/a_ |
+| ```GoogleMobileAds``` | ~> 7.55.1 | _n/a_ |
 | ```InMobi``` | ~> 7.2.0 | _n/a_ |
 | ```MoPub``` | ~> 5.6.0 | _n/a_ |
 | ```Tapjoy``` | ~> 12.2.0 | _n/a_ |
