@@ -25,7 +25,7 @@ Available _subspecs_ are:
 | ```InMobi``` | ~> 7.2.0 | _n/a_ |
 | ```MoPub``` | ~> 5.6.0 | _n/a_ |
 | ```Tapjoy``` | ~> 12.2.0 | _n/a_ |
-| ```Vungle``` | ~> 6.2.0 | _n/a_ |
+| ```Vungle``` | ~> 6.5.3 | _n/a_ |
 
 __Note:__ if you install the pod _Smart-Display-SDK-With-Mediation_ without specifying any _subspec_, only the __Smart Display SDK__ will be installed.
 

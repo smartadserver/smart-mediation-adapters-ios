@@ -45,15 +45,15 @@ NS_ASSUME_NONNULL_BEGIN
         // Adapt the code below if your app don't follow this convention.
         NSString *storedBinaryConsentForAdvertising = [[NSUserDefaults standardUserDefaults] objectForKey:@"Smart_advertisingConsentStatus"];
         if (storedBinaryConsentForAdvertising && [storedBinaryConsentForAdvertising isEqualToString:@"1"]) {
-            [[VungleSDK sharedSDK] updateConsentStatus:VungleConsentAccepted];
+            [[VungleSDK sharedSDK] updateConsentStatus:VungleConsentAccepted consentMessageVersion:@""];
         } else {
-            [[VungleSDK sharedSDK] updateConsentStatus:VungleConsentDenied];
+            [[VungleSDK sharedSDK] updateConsentStatus:VungleConsentDenied consentMessageVersion:@""];
         }
         
     } else {
         
         // If GDPR does not apply, AppLovin user consent can be set to accepted.
-        [[VungleSDK sharedSDK] updateConsentStatus:VungleConsentAccepted];
+        [[VungleSDK sharedSDK] updateConsentStatus:VungleConsentAccepted consentMessageVersion:@""];
         
     }
 }
