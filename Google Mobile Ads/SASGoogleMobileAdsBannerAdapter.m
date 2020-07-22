@@ -71,6 +71,8 @@ NS_ASSUME_NONNULL_BEGIN
             return kGADAdSizeMediumRectangle;
         case 2:
             return kGADAdSizeLeaderboard;
+        case 3:
+            return kGADAdSizeLargeBanner;
         default:
             return kGADAdSizeBanner;
     }
