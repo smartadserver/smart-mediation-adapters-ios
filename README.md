@@ -24,6 +24,7 @@ Available _subspecs_ are:
 | ```GoogleMobileAds``` | ~> 7.55.1 | _n/a_ |
 | ```InMobi``` | ~> 7.2.0 | _n/a_ |
 | ```MoPub``` | ~> 5.6.0 | _n/a_ |
+| ```Ogury``` | ~> 2.3.0 | _n/a_ |
 | ```Tapjoy``` | ~> 12.2.0 | _n/a_ |
 | ```Vungle``` | ~> 6.5.3 | _n/a_ |
 
