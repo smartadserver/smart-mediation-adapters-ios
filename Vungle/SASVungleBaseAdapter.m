@@ -17,12 +17,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @implementation SASVungleBaseAdapter
 
-- (BOOL)configureIDWithServerParameterString:(NSString *)serverParameterString error:(NSError * _Nullable __autoreleasing *)error {
+- (BOOL)configureAdapterWithServerParameterString:(NSString *)serverParameterString error:(NSError * _Nullable __autoreleasing *)error {
     // IDs are sent as a slash separated string
     NSArray *serverParameters = [serverParameterString componentsSeparatedByString:@"/"];
     
     // Invalid parameter string, the loading will be cancelled with an error
-    if (serverParameters.count != 2 || ![serverParameters[0] isKindOfClass:[NSString class]] || ![serverParameters[1] isKindOfClass:[NSString class]]) {
+    if (serverParameters.count > 3 || serverParameters.count < 2 || ![serverParameters[0] isKindOfClass:[NSString class]] || ![serverParameters[1] isKindOfClass:[NSString class]]) {
         *error = [NSError errorWithDomain:SASVungleAdapterErrorDomain code:SASVungleAdapterErrorCodeInvalidParameterString userInfo:@{ NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Invalid server parameter string: %@", serverParameterString] }];
         return NO;
     }
@@ -30,6 +30,12 @@ NS_ASSUME_NONNULL_BEGIN
     // Extracting and converting parameters
     self.applicationID = serverParameters[0];
     self.placementID = serverParameters[1];
+    
+    if (serverParameters.count == 3) {
+        self.bannerAdSizeIndex = [serverParameters[2] intValue];
+    } else {
+        self.bannerAdSizeIndex = -1;
+    }
     
     return YES;
 }

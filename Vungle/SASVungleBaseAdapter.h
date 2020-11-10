@@ -31,6 +31,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// Vungle Placement ID.
 @property (nonatomic, strong) NSString *placementID;
 
+/// Vungle Banner Ad Size.
+@property (nonatomic, assign) NSInteger bannerAdSizeIndex;
+
 /// Boolean used to know if the ad is ready or not.
 @property (nonatomic, assign) BOOL adIsReady;
 
@@ -44,7 +47,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param error A reference to a NSError that will be filled if the method fails (and returns NO).
  @return YES if the configuration is successful, NO otherwise.
  */
-- (BOOL)configureIDWithServerParameterString:(NSString *)serverParameterString error:(NSError **)error;
+- (BOOL)configureAdapterWithServerParameterString:(NSString *)serverParameterString error:(NSError **)error;
 
 /**
  Configure GDPR for AppLovin SDK from the client parameters dictionary provided by the

@@ -34,7 +34,7 @@ NS_ASSUME_NONNULL_BEGIN
     
     NSError *error;
     
-    if (![self configureIDWithServerParameterString:serverParameterString error:&error]) {
+    if (![self configureAdapterWithServerParameterString:serverParameterString error:&error]) {
         [self.delegate mediationRewardedVideoAdapter:self didFailToLoadWithError:error noFill:NO];
         return;
     }

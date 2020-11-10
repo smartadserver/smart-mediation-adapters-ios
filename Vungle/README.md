@@ -2,5 +2,13 @@
 
 ## Known issue
 
-### Support for only one Vungle placement
-Due to __Vungle__ SDK way to load and precache placements, you will be able to load only one placement per application launch. __Vungle__ must be initialized with all placements you will want to use through an application lifecycle. Mediation insertions of __Smart__ will only take one placement as input and initialize the __Vungle__ SDK with this placement, locking __Vungle__ SDK in a state where only this placement will be available until the app is killed and the __Vungle__ SDK re-activated.
+### Manual adapters installation
+
+We cannot provide automatic Vungle integration through Cocoapods at the moment due to an issue with Xcode 12.
+
+You can install these mediation adapters manually by **copying all files from this directory into your project**, then adding both MoPub and Smart SDK to your Podfile:
+
+```
+pod "Smart-Display-SDK"
+pod "VungleSDK-iOS", "~> 6.8.1"
+```
