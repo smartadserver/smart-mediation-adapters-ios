@@ -10,5 +10,5 @@ You can install these mediation adapters manually by **copying all files from th
 
 ```
 pod "Smart-Display-SDK"
-pod "mopub-ios-sdk", "~> 5.14.1"
+pod "mopub-ios-sdk", "~> 5.6.0"
 ```
