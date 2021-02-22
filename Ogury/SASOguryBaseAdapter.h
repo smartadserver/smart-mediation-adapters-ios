@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <SASDisplayKit/SASdisplayKit.h>
+#import <SASDisplayKit/SASDisplayKit.h>
 #import <OguryAds/OguryAds.h>
 #import <OguryChoiceManager/OguryChoiceManager.h>
 
@@ -16,6 +16,7 @@
 #define SASOguryAdapterErrorCodeAdNotAvailable              2
 #define SASOguryAdapterErrorCodeAdNotLoaded                 3
 #define SASOguryAdapterErrorCodeAdError                     4
+#define SASOguryAdapterErrorCodeCannotInitializeOgurySDK    5
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -55,10 +56,11 @@ typedef struct SASOguryAdapterThumbnailSize {
  
  @param serverParameterString The server parameter string provided by Smart.
  @param clientParameters      The client parameters dictionary provided by Smart.
- @param error                 A reference to an error that will be returned if the configuration fails.
- @return YES if the configuration is successful, NO otherwise.
+ @param completionHandler     Handler called when the Ogury SDK setup is finished (it will return an error in case of failure, nil if successful).
  */
-- (BOOL)configureOgurySDKWithServerParameterString:(NSString *)serverParameterString andClientParameters:(NSDictionary *)clientParameters error:(NSError **)error;
+- (void)configureOgurySDKWithServerParameterString:(NSString *)serverParameterString
+                               andClientParameters:(NSDictionary *)clientParameters
+                                 completionHandler:(void(^)(NSError * _Nullable))completionHandler;
 
 @end
 

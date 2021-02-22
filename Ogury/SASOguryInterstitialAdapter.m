@@ -21,18 +21,18 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)requestInterstitialWithServerParameterString:(NSString *)serverParameterString clientParameters:(NSDictionary *)clientParameters {
     // Ogury configuration
-    NSError *error = nil;
-    if (![self configureOgurySDKWithServerParameterString:serverParameterString andClientParameters:clientParameters error:&error]) {
-        // Configuration can fail if the serverParameterString is invalid
-        [self.delegate mediationInterstitialAdapter:self didFailToLoadWithError:error noFill:NO];
-        return;
-    }
-    
-    // Interstitial instantiation and loading
-    self.interstitial = [[OguryAdsInterstitial alloc] initWithAdUnitID:self.adUnitId];
-    self.interstitial.interstitialDelegate = self;
-    
-    [self.interstitial load];
+    [self configureOgurySDKWithServerParameterString:serverParameterString andClientParameters:clientParameters completionHandler:^(NSError *error) {
+        if (error == nil) {
+            // Interstitial instantiation and loading
+            self.interstitial = [[OguryAdsInterstitial alloc] initWithAdUnitID:self.adUnitId];
+            self.interstitial.interstitialDelegate = self;
+            
+            [self.interstitial load];
+        } else {
+            // Configuration can fail if the serverParameterString is invalid or if the Ogury SDK does not initialize properly
+            [self.delegate mediationInterstitialAdapter:self didFailToLoadWithError:error noFill:NO];
+        }
+    }];    
 }
 
 - (void)showInterstitialFromViewController:(UIViewController *)viewController {

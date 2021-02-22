@@ -21,18 +21,18 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)requestBannerWithServerParameterString:(nonnull NSString *)serverParameterString clientParameters:(nonnull NSDictionary *)clientParameters viewController:(nonnull UIViewController *)viewController {
     // Ogury configuration
-    NSError *error = nil;
-    if (![self configureOgurySDKWithServerParameterString:serverParameterString andClientParameters:clientParameters error:&error]) {
-        // Configuration can fail if the serverParameterString is invalid
-        [self.delegate mediationBannerAdapter:self didFailToLoadWithError:error noFill:NO];
-        return;
-    }
-    
-    // Thumbnail instantiation and loading
-    self.thumbnailAd = [[OguryAdsThumbnailAd alloc] initWithAdUnitID:self.adUnitId];
-    self.thumbnailAd.thumbnailAdDelegate = self;
-    
-    [self.thumbnailAd load:CGSizeMake(self.thumbnailSize.maxWidth, self.thumbnailSize.maxHeight)];
+    [self configureOgurySDKWithServerParameterString:serverParameterString andClientParameters:clientParameters completionHandler:^(NSError *error) {
+        if (error == nil) {
+            // Thumbnail instantiation and loading
+            self.thumbnailAd = [[OguryAdsThumbnailAd alloc] initWithAdUnitID:self.adUnitId];
+            self.thumbnailAd.thumbnailAdDelegate = self;
+            
+            [self.thumbnailAd load:CGSizeMake(self.thumbnailSize.maxWidth, self.thumbnailSize.maxHeight)];
+        } else {
+            // Configuration can fail if the serverParameterString is invalid or if the Ogury SDK does not initialize properly
+            [self.delegate mediationBannerAdapter:self didFailToLoadWithError:error noFill:NO];
+        }
+    }];
 }
 
 #pragma mark - Ogury Thumbnail delegate

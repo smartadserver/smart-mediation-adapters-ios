@@ -12,14 +12,17 @@ NS_ASSUME_NONNULL_BEGIN
 
 @implementation SASOguryBaseAdapter
 
-- (BOOL)configureOgurySDKWithServerParameterString:(NSString *)serverParameterString andClientParameters:(NSDictionary *)clientParameters error:(NSError **)error {
+- (void)configureOgurySDKWithServerParameterString:(NSString *)serverParameterString
+                               andClientParameters:(NSDictionary *)clientParameters
+                                 completionHandler:(void(^)(NSError * _Nullable))completionHandler {
     // Retrieve the asset key and the ad unit id
     NSArray *serverParameters = [serverParameterString componentsSeparatedByString:@"|"];
     
     // Invalid parameter string, the loading will be cancelled with an error
     if (serverParameters.count != 2 && serverParameters.count != 3 && serverParameters.count != 6) {
-        *error = [NSError errorWithDomain:SASOguryAdapterErrorDomain code:SASOguryAdapterErrorCodeInvalidParameterString userInfo:@{ NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Invalid server parameter string: %@", serverParameterString] }];
-        return NO;
+        NSError *error = [NSError errorWithDomain:SASOguryAdapterErrorDomain code:SASOguryAdapterErrorCodeInvalidParameterString userInfo:@{ NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Invalid server parameter string: %@", serverParameterString] }];
+        completionHandler(error);
+        return;
     }
     
     // Parsing generic parameters
@@ -30,8 +33,9 @@ NS_ASSUME_NONNULL_BEGIN
     if (serverParameters.count == 3) {
         // Invalid parameter string, the loading will be cancelled with an error
         if (![serverParameters[2] respondsToSelector:@selector(integerValue)]) {
-            *error = [NSError errorWithDomain:SASOguryAdapterErrorDomain code:SASOguryAdapterErrorCodeInvalidParameterString userInfo:@{ NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Invalid server parameter string: %@", serverParameterString] }];
-            return NO;
+            NSError *error = [NSError errorWithDomain:SASOguryAdapterErrorDomain code:SASOguryAdapterErrorCodeInvalidParameterString userInfo:@{ NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Invalid server parameter string: %@", serverParameterString] }];
+            completionHandler(error);
+            return;
         }
         
         // Setting banner size
@@ -49,8 +53,9 @@ NS_ASSUME_NONNULL_BEGIN
             || ![serverParameters[3] respondsToSelector:@selector(integerValue)]
             || ![serverParameters[4] respondsToSelector:@selector(integerValue)]
             || ![serverParameters[5] respondsToSelector:@selector(integerValue)]) {
-            *error = [NSError errorWithDomain:SASOguryAdapterErrorDomain code:SASOguryAdapterErrorCodeInvalidParameterString userInfo:@{ NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Invalid server parameter string: %@", serverParameterString] }];
-            return NO;
+            NSError *error = [NSError errorWithDomain:SASOguryAdapterErrorDomain code:SASOguryAdapterErrorCodeInvalidParameterString userInfo:@{ NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Invalid server parameter string: %@", serverParameterString] }];
+            completionHandler(error);
+            return;
         }
         
         // Setting Thumbnail size
@@ -70,10 +75,19 @@ NS_ASSUME_NONNULL_BEGIN
         [OguryChoiceManagerExternal setConsentForTCFV2WithAssetKey:assetKey iabString:tcfString andNonIABVendorsAccepted:@[]];
     }
     
-    // Init Ogury SDK
-    [[OguryAds shared] setupWithAssetKey:assetKey];
-    
-    return YES;
+    // Initializing Ogury SDK
+    [[OguryAds shared] setupWithAssetKey:assetKey andCompletionHandler:^(NSError *error) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (error == nil) {
+                // Ogury has been successfully initialized
+                completionHandler(nil);
+            } else {
+                // An error occurred when initializing Ogury
+                NSError *handlerError = [NSError errorWithDomain:SASOguryAdapterErrorDomain code:SASOguryAdapterErrorCodeCannotInitializeOgurySDK userInfo:@{ NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Ogury SDK returned error: %@", error] }];
+                completionHandler(handlerError);
+            }
+        });
+    }];
 }
 
 @end

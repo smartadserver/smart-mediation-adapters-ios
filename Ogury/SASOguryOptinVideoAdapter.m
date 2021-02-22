@@ -21,18 +21,18 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)requestRewardedVideoWithServerParameterString:(nonnull NSString *)serverParameterString clientParameters:(nonnull NSDictionary *)clientParameters {
     // Ogury configuration
-    NSError *error = nil;
-    if (![self configureOgurySDKWithServerParameterString:serverParameterString andClientParameters:clientParameters error:&error]) {
-        // Configuration can fail if the serverParameterString is invalid
-        [self.delegate mediationRewardedVideoAdapter:self didFailToLoadWithError:error noFill:NO];
-        return;
-    }
-    
-    // Optin video instantiation and loading
-    self.optInVideo = [[OguryAdsOptinVideo alloc] initWithAdUnitID:self.adUnitId];
-    self.optInVideo.optInVideoDelegate = self;
-    
-    [self.optInVideo load];
+    [self configureOgurySDKWithServerParameterString:serverParameterString andClientParameters:clientParameters completionHandler:^(NSError *error) {
+        if (error == nil) {
+            // Optin video instantiation and loading
+            self.optInVideo = [[OguryAdsOptinVideo alloc] initWithAdUnitID:self.adUnitId];
+            self.optInVideo.optInVideoDelegate = self;
+            
+            [self.optInVideo load];
+        } else {
+            // Configuration can fail if the serverParameterString is invalid or if the Ogury SDK does not initialize properly
+            [self.delegate mediationRewardedVideoAdapter:self didFailToLoadWithError:error noFill:NO];
+        }
+    }];
 }
 
 - (void)showRewardedVideoFromViewController:(nonnull UIViewController *)viewController {
