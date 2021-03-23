@@ -10,5 +10,8 @@ You can install these mediation adapters manually by **copying all files from th
 
 ```
 pod "Smart-Display-SDK"
-pod "mopub-ios-sdk", "~> 5.6.0"
+pod "mopub-ios-sdk", "~> 5.16.1"
 ```
+
+### Click counting discrepancy
+Only the interstitial adapter is counting clicks. All other formats don't.

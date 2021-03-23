@@ -86,11 +86,11 @@
     if (self.googleMobileAdsInitStatus == GoogleMobileAdsTypeAdMob) {
         request = [GADRequest request];
     } else if (self.googleMobileAdsInitStatus == GoogleMobileAdsTypeAdManager) {
-        request = [DFPRequest request];
+        request = [GAMRequest request];
     }
     
     // Test ads will be returned for devices with device IDs specified in this array.
-    request.testDevices = @[ kGADSimulatorID /* other UDIDs here */];
+    GADMobileAds.sharedInstance.requestConfiguration.testDeviceIdentifiers = @[ kGADSimulatorID /* other UDIDs here */ ];
     request.requestAgent = SASGoogleMobileAdsAdapterRequestAgent;
     
     CLLocation *location = [clientParameters objectForKey:SASMediationClientParameterLocation];

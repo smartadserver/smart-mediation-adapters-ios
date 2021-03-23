@@ -22,13 +22,13 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (BOOL)isRewardedVideoReady { 
-    return [self.rewarded isReady];
+    return self.rewardedAd != nil;
 }
 
 - (void)requestRewardedVideoWithServerParameterString:(nonnull NSString *)serverParameterString clientParameters:(nonnull NSDictionary *)clientParameters { 
     
     // Previous state is reset if any
-    self.rewarded = nil;
+    self.rewardedAd = nil;
     
     // Parameter retrieval and validation
     NSError *error = nil;
@@ -40,19 +40,31 @@ NS_ASSUME_NONNULL_BEGIN
         return;
     }
     
-    // Create Google Rewarded Video
-    self.rewarded = [GADRewardBasedVideoAd sharedInstance];
-    self.rewarded.delegate = self;
-
     // Create Google Ad Request
     GADRequest *request = [self requestWithClientParameters:clientParameters];
     
-    [self.rewarded loadRequest:request withAdUnitID:self.adUnitID];
+    // Create Google Rewarded Video
+    [GADRewardedAd loadWithAdUnitID:self.adUnitID request:request completionHandler:^(GADRewardedAd *rewardedAd, NSError *error) {
+        // No ad fetched
+        if (error) {
+            [self.delegate mediationRewardedVideoAdapter:self didFailToLoadWithError:error noFill:(error.code == GADErrorNoFill)];
+            return;
+        }
+        
+        // Ad fetched
+        self.rewardedAd = rewardedAd;
+        [self.delegate mediationRewardedVideoAdapterDidLoad:self];
+    }];
+    
 }
 
 - (void)showRewardedVideoFromViewController:(nonnull UIViewController *)viewController {
-    if ([self.rewarded isReady]) {
-        [[GADRewardBasedVideoAd sharedInstance] presentFromRootViewController:viewController];
+    if ([self isRewardedVideoReady]) {
+        self.rewardedAd.fullScreenContentDelegate = self;
+        [self.rewardedAd presentFromRootViewController:viewController userDidEarnRewardHandler:^{
+            SASReward *sasReward = [[SASReward alloc] initWithAmount:[self.rewardedAd.adReward.amount copy] currency:[self.rewardedAd.adReward.type copy]];
+            [self.delegate mediationRewardedVideoAdapter:self didCollectReward:sasReward];
+        }];
     } else {
         // We will send the error if the reward-based video ad has already been presented.
         NSError *error = [NSError errorWithDomain:SASGoogleMobileAdsAdapterErrorDomain
@@ -62,41 +74,22 @@ NS_ASSUME_NONNULL_BEGIN
     }
 }
 
-#pragma mark - GADRewardBasedVideoAdDelegate methods
+#pragma mark - GMA Fullscreen ad delegate
 
-- (void)rewardBasedVideoAdDidReceiveAd:(GADRewardBasedVideoAd *)rewardBasedVideoAd {
-    [self.delegate mediationRewardedVideoAdapterDidLoad:self];
+- (void)adDidRecordImpression:(nonnull id<GADFullScreenPresentingAd>)ad {
+    // not used
 }
 
-- (void)rewardBasedVideoAd:(GADRewardBasedVideoAd *)rewardBasedVideoAd didFailToLoadWithError:(NSError *)error {
-    [self.delegate mediationRewardedVideoAdapter:self didFailToLoadWithError:error noFill:(error.code == kGADErrorNoFill)];
+- (void)ad:(nonnull id<GADFullScreenPresentingAd>)ad didFailToPresentFullScreenContentWithError:(nonnull NSError *)error {
+    [self.delegate mediationRewardedVideoAdapter:self didFailToShowWithError:error];
 }
 
-- (void)rewardBasedVideoAd:(nonnull GADRewardBasedVideoAd *)rewardBasedVideoAd didRewardUserWithReward:(nonnull GADAdReward *)reward {
-    // Convert to SASReward
-    SASReward *sasReward = [[SASReward alloc] initWithAmount:[reward.amount copy] currency:[reward.type copy]];
-    [self.delegate mediationRewardedVideoAdapter:self didCollectReward:sasReward];
-}
-
-- (void)rewardBasedVideoAdDidOpen:(GADRewardBasedVideoAd *)rewardBasedVideoAd {
+- (void)adDidPresentFullScreenContent:(nonnull id<GADFullScreenPresentingAd>)ad {
     [self.delegate mediationRewardedVideoAdapterDidShow:self];
 }
 
-- (void)rewardBasedVideoAdDidStartPlaying:(GADRewardBasedVideoAd *)rewardBasedVideoAd {
-    // Nothing to do
-}
-
-- (void)rewardBasedVideoAdDidCompletePlaying:(GADRewardBasedVideoAd *)rewardBasedVideoAd {
-    // Nothing to do
-}
-
-- (void)rewardBasedVideoAdDidClose:(GADRewardBasedVideoAd *)rewardBasedVideoAd {
+- (void)adDidDismissFullScreenContent:(nonnull id<GADFullScreenPresentingAd>)ad {
     [self.delegate mediationRewardedVideoAdapterDidClose:self];
-}
-
-- (void)rewardBasedVideoAdWillLeaveApplication:(GADRewardBasedVideoAd *)rewardBasedVideoAd {
-    // In this case, we track the click
-    [self.delegate mediationRewardedVideoAdapterDidReceiveAdClickedEvent:self];
 }
 
 @end

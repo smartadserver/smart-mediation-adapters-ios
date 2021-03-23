@@ -20,13 +20,13 @@ NS_ASSUME_NONNULL_BEGIN
  To use an adapter class, you simply have to add them to your Xcode project and they will
  be automatically instantiated by the Smart SDK if needed.
  */
-@interface SASGoogleMobileAdsInterstitialAdapter : SASGoogleMobileAdsBaseAdapter <SASMediationInterstitialAdapter, GADInterstitialDelegate>
+@interface SASGoogleMobileAdsInterstitialAdapter : SASGoogleMobileAdsBaseAdapter <SASMediationInterstitialAdapter, GADFullScreenContentDelegate>
 
 /// A delegate that this adapter must call to provide information about the ad loading status or events to the Smart SDK.
 @property (nonatomic, weak) id<SASMediationInterstitialAdapterDelegate> delegate;
 
 /// The currently loaded Google Mobile Ads interstitial if any.
-@property (nonatomic, strong, nullable) GADInterstitial *interstitial;
+@property (nonatomic, strong, nullable) GADInterstitialAd *interstitial;
 
 @end
 

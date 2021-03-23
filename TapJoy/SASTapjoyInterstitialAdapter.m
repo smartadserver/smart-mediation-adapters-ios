@@ -90,6 +90,10 @@ NS_ASSUME_NONNULL_BEGIN
     [self.delegate mediationInterstitialAdapterDidClose:self];
 }
 
+- (void) didClick:(TJPlacement *)placement {
+    [self.delegate mediationInterstitialAdapterDidReceiveAdClickedEvent:self];
+}
+
 @end
 
 NS_ASSUME_NONNULL_END

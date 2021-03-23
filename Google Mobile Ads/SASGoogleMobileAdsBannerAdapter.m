@@ -42,7 +42,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     } else if (GoogleMobileAdsTypeAdManager == gmaType) {
         // Create Google DFP Banner View and configure it.
-        self.bannerView =  [[DFPBannerView alloc] initWithAdSize:adSize];
+        self.bannerView =  [[GAMBannerView alloc] initWithAdSize:adSize];
     }
     
     self.bannerView.delegate = self;
@@ -81,29 +81,24 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - GMA Banner View Delegate
 
-- (void)adViewDidReceiveAd:(GADBannerView *)bannerView {
+- (void)bannerViewDidReceiveAd:(nonnull GADBannerView *)bannerView {
     [self.delegate mediationBannerAdapter:self didLoadBanner:bannerView];
 }
 
-- (void)adView:(GADBannerView *)bannerView didFailToReceiveAdWithError:(GADRequestError *)error {
-    [self.delegate mediationBannerAdapter:self didFailToLoadWithError:error noFill:(error.code == kGADErrorNoFill)];
+- (void)bannerView:(nonnull GADBannerView *)bannerView didFailToReceiveAdWithError:(nonnull NSError *)error {
+    [self.delegate mediationBannerAdapter:self didFailToLoadWithError:error noFill:(error.code == GADErrorNoFill)];
 }
 
-- (void)adViewWillPresentScreen:(GADBannerView *)bannerView {
+- (void)bannerViewWillPresentScreen:(nonnull GADBannerView *)bannerView {
     [self.delegate mediationBannerAdapterWillPresentModalView:self];
 }
 
-- (void)adViewWillDismissScreen:(GADBannerView *)bannerView {
+- (void)bannerViewWillDismissScreen:(nonnull GADBannerView *)bannerView {
     [self.delegate mediationBannerAdapterWillDismissModalView:self];
 }
 
-- (void)adViewDidDismissScreen:(GADBannerView *)bannerView {
+- (void)bannerViewDidDismissScreen:(nonnull GADBannerView *)bannerView {
     // Nothing to do
-}
-
-- (void)adViewWillLeaveApplication:(GADBannerView *)bannerView {
-    // In this case, we track the click
-    [self.delegate mediationBannerAdapterDidReceiveAdClickedEvent:self];
 }
 
 @end

@@ -91,6 +91,10 @@ NS_ASSUME_NONNULL_BEGIN
     [self.delegate mediationRewardedVideoAdapterDidClose:self];
 }
 
+- (void) didClick:(TJPlacement *)placement {
+    [self.delegate mediationRewardedVideoAdapterDidReceiveAdClickedEvent:self];
+}
+
 #pragma mark - Tapjoy video delegate
 
 - (void)videoDidComplete:(TJPlacement *)placement {

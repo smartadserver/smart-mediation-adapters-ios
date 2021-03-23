@@ -69,9 +69,14 @@ NS_ASSUME_NONNULL_BEGIN
     BOOL gdprApplies = [[clientParameters objectForKey:SASMediationClientParameterGDPRApplies] boolValue];
     NSString *gdprConsent = [clientParameters objectForKey:SASMediationClientParameterGDPRConsent];
     
-    [Tapjoy subjectToGDPR:gdprApplies];
+    TJPrivacyPolicy *privacyPolicy = [Tapjoy getPrivacyPolicy];
+    [privacyPolicy setSubjectToGDPR: gdprApplies];
     if (gdprConsent != nil) {
-        [Tapjoy setUserConsent:gdprConsent];
+        [privacyPolicy setUserConsent: gdprConsent];
+    }
+    NSString *iabUSPrivacy = [[NSUserDefaults standardUserDefaults] objectForKey:@"IABUSPrivacy_String"];
+    if (iabUSPrivacy) {
+        [privacyPolicy setUSPrivacy: iabUSPrivacy];
     }
 }
 

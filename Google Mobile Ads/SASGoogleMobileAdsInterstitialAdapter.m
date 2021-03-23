@@ -37,21 +37,32 @@ NS_ASSUME_NONNULL_BEGIN
     }
     
     if (GoogleMobileAdsTypeAdMob == gmaType) {
-        // Create Google Interstitial
-        self.interstitial = [[GADInterstitial alloc] initWithAdUnitID:self.adUnitID];
+        // Create Google Ad Request
+        GADRequest *request = [self requestWithClientParameters:clientParameters];
+        // Perform ad request
+        [GADInterstitialAd loadWithAdUnitID:self.adUnitID request:request completionHandler:^(GADInterstitialAd * _Nullable interstitialAd, NSError * _Nullable error) {
+            if (error) {
+              [self.delegate mediationInterstitialAdapter:self didFailToLoadWithError:error noFill:(error.code == GADErrorNoFill)];
+              return;
+            }
+            [self.delegate mediationInterstitialAdapterDidLoad:self];
+            self.interstitial = interstitialAd;
+            self.interstitial.fullScreenContentDelegate = self;
+        }];
     } else if (GoogleMobileAdsTypeAdManager == gmaType) {
-        // Create Google DFP Interstitial
-        self.interstitial =  [[DFPInterstitial alloc] initWithAdUnitID:self.adUnitID];
+        // Create Google Ad Request
+        GAMRequest *request = (GAMRequest*)[self requestWithClientParameters:clientParameters];
+        // Perform ad request
+        [GAMInterstitialAd loadWithAdManagerAdUnitID:self.adUnitID request:request completionHandler:^(GAMInterstitialAd * _Nullable interstitialAd, NSError * _Nullable error) {
+            if (error) {
+              [self.delegate mediationInterstitialAdapter:self didFailToLoadWithError:error noFill:(error.code == GADErrorNoFill)];
+              return;
+            }
+            [self.delegate mediationInterstitialAdapterDidLoad:self];
+            self.interstitial = interstitialAd;
+            self.interstitial.fullScreenContentDelegate = self;
+        }];
     }
-    
-    self.interstitial.delegate = self;
-
-    // Create Google Ad Request
-    GADRequest *request = [self requestWithClientParameters:clientParameters];
-    
-    // Perform ad request
-    [self.interstitial loadRequest:request];
-   
 }
 
 - (void)showInterstitialFromViewController:(UIViewController *)viewController {
@@ -59,31 +70,30 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (BOOL)isInterstitialReady {
-    return [self.interstitial isReady];
+    return self.interstitial != nil;
 }
 
-#pragma mark - GMA Banner View Delegate
+#pragma mark - GADFullScreenContentDelegate Delegate
 
-- (void)interstitialDidReceiveAd:(GADInterstitial *)interstitial {
-    [self.delegate mediationInterstitialAdapterDidLoad:self];
+- (void)adDidRecordImpression:(nonnull id<GADFullScreenPresentingAd>)ad {
+    // not used
 }
 
-- (void)interstitial:(GADInterstitial *)interstitial didFailToReceiveAdWithError:(GADRequestError *)error {
-    [self.delegate mediationInterstitialAdapter:self didFailToLoadWithError:error noFill:(error.code == kGADErrorNoFill)];
+- (void)ad:(nonnull id<GADFullScreenPresentingAd>)ad
+didFailToPresentFullScreenContentWithError:(nonnull NSError *)error {
+    [self.delegate mediationInterstitialAdapter:self didFailToShowWithError:error];
 }
 
-- (void)interstitialWillPresentScreen:(GADInterstitial *)interstitial {
+/// Tells the delegate that the ad presented full screen content.
+- (void)adDidPresentFullScreenContent:(nonnull id<GADFullScreenPresentingAd>)ad {
     [self.delegate mediationInterstitialAdapterDidShow:self];
 }
 
-- (void)interstitialDidDismissScreen:(GADInterstitial *)ad {
+/// Tells the delegate that the ad dismissed full screen content.
+- (void)adDidDismissFullScreenContent:(nonnull id<GADFullScreenPresentingAd>)ad {
     [self.delegate mediationInterstitialAdapterDidClose:self];
 }
 
-- (void)interstitialWillLeaveApplication:(GADInterstitial *)ad {
-    // In this case, we track the click
-    [self.delegate mediationInterstitialAdapterDidReceiveAdClickedEvent:self];
-}
 
 @end
 
