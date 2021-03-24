@@ -7,11 +7,13 @@
 //
 
 #import "SASMoPubInterstitialAdapter.h"
-#import "MoPub.h"
+#import <MoPubSDK/MoPub.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface SASMoPubInterstitialAdapter () <MPInterstitialAdControllerDelegate>
+
+@property (nonatomic, strong) NSDictionary *clientParameters;
 
 @end
 
@@ -28,16 +30,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)requestInterstitialWithServerParameterString:(NSString *)serverParameterString clientParameters:(NSDictionary *)clientParameters {
     self.isReady = NO;
+    self.clientParameters = clientParameters;
     
     // Configuring Application ID is done in the base class
     [self configureApplicationIDWithServerParameterString:serverParameterString];
-    
-    // Configuring GDPR status is done in the base class
-    if ([self configureGDPRWithClientParameters:clientParameters]) {
-        // If MoPub is attempting to display a CMP consent dialog, we abort the ad call so we don't display an interstitial
-        // and the dialog at the same time.
-        return;
-    }
     
     // Creating the MoPub interstitia controller
     self.interstitialController = [MPInterstitialAdController interstitialAdControllerForAdUnitId:self.adUnitID];
@@ -51,6 +47,21 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (void)showInterstitialFromViewController:(UIViewController *)viewController {
+    // Configuring GDPR status is done in the base class
+    if ([self configureGDPRWithClientParameters:self.clientParameters viewController:viewController]) {
+        // If MoPub is attempting to display a CMP consent dialog, we abort the ad show so we don't display an interstitial
+        // and the dialog at the same time.
+        
+        // Call failToShow delegate to reset the interstitial for the next call.
+        NSError *error = [NSError errorWithDomain:SASMoPubAdapterErrorDomain
+                                             code:SASMoPubAdapterErrorCodeCMPDisplayed
+                                         userInfo:@{ NSLocalizedDescriptionKey: @"The MoPub CMP was displayed instead of the interstitial ad." }];
+        [self.delegate mediationInterstitialAdapter:self didFailToShowWithError:error];
+        
+        return;
+    }
+    
+    printf("the interstitial is shown");
     [self.interstitialController showFromViewController:viewController];
 }
 
@@ -74,7 +85,7 @@ NS_ASSUME_NONNULL_BEGIN
     [self.delegate mediationInterstitialAdapterDidShow:self];
 }
 
-- (void)interstitialDidDisappear:(MPInterstitialAdController *)interstitial {
+- (void)interstitialDidDismiss:(MPInterstitialAdController *)interstitial {
     [self.delegate mediationInterstitialAdapterDidClose:self];
 }
 

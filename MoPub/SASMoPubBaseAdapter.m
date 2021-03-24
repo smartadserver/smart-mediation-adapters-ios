@@ -7,7 +7,7 @@
 //
 
 #import "SASMoPubBaseAdapter.h"
-#import "MoPub.h"
+#import <MoPubSDK/MoPub.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -17,11 +17,11 @@ NS_ASSUME_NONNULL_BEGIN
     self.adUnitID = serverParameterString;
 }
 
-- (BOOL)configureGDPRWithClientParameters:(NSDictionary *)clientParameters {
+- (BOOL)configureGDPRWithClientParameters:(NSDictionary *)clientParameters viewController:(UIViewController *)viewController {
     if ([[MoPub sharedInstance] shouldShowConsentDialog]) {
         [[MoPub sharedInstance] loadConsentDialogWithCompletion:^(NSError * _Nullable error) {
             if (!error) {
-                [[MoPub sharedInstance] showConsentDialogFromViewController:[UIApplication sharedApplication].keyWindow.rootViewController completion:nil];
+                [[MoPub sharedInstance] showConsentDialogFromViewController:viewController completion:nil];
             }
         }];
         return YES;

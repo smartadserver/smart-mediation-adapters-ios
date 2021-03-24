@@ -12,6 +12,7 @@
 #define SASMoPubAdapterErrorDomain              @"SASMoPubAdapter"
 
 #define SASMoPubAdapterErrorCodeNoAd            100
+#define SASMoPubAdapterErrorCodeCMPDisplayed    200
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -44,7 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param clientParameters The client parameters dictionary provided by Smart.
  @return YES if MoPub will attempt to show a CMP consent dialog, NO otherwise.
  */
-- (BOOL)configureGDPRWithClientParameters:(NSDictionary *)clientParameters;
+- (BOOL)configureGDPRWithClientParameters:(NSDictionary *)clientParameters viewController:(UIViewController *)viewController;
 
 /**
  Initialize the MoPub SDK if necessary then call a completion block that can be used to perform

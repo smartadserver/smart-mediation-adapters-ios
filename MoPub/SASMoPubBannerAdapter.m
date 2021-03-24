@@ -7,7 +7,7 @@
 //
 
 #import "SASMoPubBannerAdapter.h"
-#import "MoPub.h"
+#import <MoPubSDK/MoPub.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -35,7 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
     // Configuring GDPR status is done in the base class
     // For banners, we don't have to check if a CMP has been displayed by MoPub because the banner will still
     // be able to load under it anyway.
-    [self configureGDPRWithClientParameters:clientParameters];
+    [self configureGDPRWithClientParameters:clientParameters viewController:self.viewController];
     
     // Creating a container view to center the MoPub banner:
     // The view returned to the SDK is automatically stretched to fit the SASBannerView instance. But since MoPub
@@ -46,19 +46,19 @@ NS_ASSUME_NONNULL_BEGIN
     
     // Creating the MoPub banner view
     CGSize actualBannerSize = [self moPubFromAdViewSize:[clientParameters objectForKey:SASMediationClientParameterAdViewSize]];
-    self.bannerView = [[MPAdView alloc] initWithAdUnitId:self.adUnitID size:actualBannerSize];
+    self.bannerView = [[MPAdView alloc] initWithAdUnitId:self.adUnitID];
     self.bannerView.delegate = self;
     [self.bannerView stopAutomaticallyRefreshingContents];
     
     // Positioning the banner on the container
-    self.bannerView.frame = CGRectMake((containerSize.width - actualBannerSize.width) / 2, (containerSize.height - actualBannerSize.height) / 2, actualBannerSize.width, actualBannerSize.height);
+    self.bannerView.frame = CGRectMake(0, (containerSize.height - actualBannerSize.height) / 2, containerSize.width, actualBannerSize.height);
     self.bannerView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
     [self.bannerContainerView addSubview:self.bannerView];
     
     // Loading the banner after initialization
     __weak typeof(self) weakSelf = self;
     [self initializeMoPubSDK:^{
-        [weakSelf.bannerView loadAd];
+        [weakSelf.bannerView loadAdWithMaxAdSize:actualBannerSize];
     }];
 }
 
@@ -68,13 +68,14 @@ NS_ASSUME_NONNULL_BEGIN
     return self.viewController;
 }
 
-- (void)adViewDidLoadAd:(MPAdView *)view {
+- (void)adViewDidLoadAd:(MPAdView *)view adSize:(CGSize)adSize {
     [self.delegate mediationBannerAdapter:self didLoadBanner:self.bannerContainerView]; // we are returning the container here, not the actual banner
 }
 
-- (void)adViewDidFailToLoadAd:(MPAdView *)view {
-    NSError *error = [NSError errorWithDomain:SASMoPubAdapterErrorDomain code:SASMoPubAdapterErrorCodeNoAd userInfo:@{ NSLocalizedDescriptionKey: @"Unable to fetch ad from MoPub" }];
-    [self.delegate mediationBannerAdapter:self didFailToLoadWithError:error noFill:YES];
+- (void)adView:(MPAdView *)view didFailToLoadAdWithError:(NSError *)error {
+    NSString *localizedDescription = [NSString stringWithFormat:@"Unable to fetch ad from MoPub. %@", error.localizedDescription];
+    NSError *smartError = [NSError errorWithDomain:SASMoPubAdapterErrorDomain code:SASMoPubAdapterErrorCodeNoAd userInfo:@{ NSLocalizedDescriptionKey: localizedDescription }];
+    [self.delegate mediationBannerAdapter:self didFailToLoadWithError:smartError noFill:YES];
     // Since there is no documented way to know if the error is due to a 'no fill', we send YES for this parameter
 }
 
@@ -95,18 +96,18 @@ NS_ASSUME_NONNULL_BEGIN
 - (CGSize)moPubFromAdViewSize:(nullable NSValue *)adViewSize {
     if (adViewSize == nil) {
         // Default size
-        return MOPUB_BANNER_SIZE;
+        return kMPPresetMaxAdSize50Height;
     }
     
     CGFloat bannerWidth = [adViewSize CGSizeValue].width;
     CGFloat bannerHeight = [adViewSize CGSizeValue].height;
     
     if (bannerHeight > bannerWidth) {
-        return MOPUB_WIDE_SKYSCRAPER_SIZE;
+        return CGSizeMake(kMPFlexibleAdSize, 600.0f); // Value of the old SKYSCRAPPER size
     } else if (bannerHeight >= 300 && bannerWidth >= 250) {
-        return MOPUB_MEDIUM_RECT_SIZE;
+        return kMPPresetMaxAdSize250Height;
     } else {
-        return MOPUB_BANNER_SIZE;
+        return kMPPresetMaxAdSize50Height;
     }
 }
 

@@ -7,11 +7,13 @@
 //
 
 #import "SASMoPubRewardedVideoAdapter.h"
-#import "MoPub.h"
+#import <MoPubSDK/MoPub.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface SASMoPubRewardedVideoAdapter () <MPRewardedVideoDelegate>
+@interface SASMoPubRewardedVideoAdapter () <MPRewardedAdsDelegate>
+
+@property (nonatomic, strong) NSDictionary *clientParameters;
 
 @end
 
@@ -27,18 +29,13 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (void)requestRewardedVideoWithServerParameterString:(NSString *)serverParameterString clientParameters:(NSDictionary *)clientParameters {
+    self.clientParameters = clientParameters;
+    
     // Configuring Application ID is done in the base class
     [self configureApplicationIDWithServerParameterString:serverParameterString];
     
-    // Configuring GDPR status is done in the base class
-    if ([self configureGDPRWithClientParameters:clientParameters]) {
-        // If MoPub is attempting to display a CMP consent dialog, we abort the ad call so we don't display an interstitial
-        // and the dialog at the same time.
-        return;
-    }
-    
     // Rewarded video configuration
-    [MPRewardedVideo setDelegate:self forAdUnitId:self.adUnitID];
+    [MPRewardedAds setDelegate:self forAdUnitId:self.adUnitID];
     
     // An ad might already be ready for this placement, if this is the case, we don't load another one because it will fail
     if ([self isRewardedVideoReady]) {
@@ -49,61 +46,75 @@ NS_ASSUME_NONNULL_BEGIN
     // Loading the rewarded videoafter initialization
     __weak typeof(self) weakSelf = self;
     [self initializeMoPubSDK:^{
-        [MPRewardedVideo loadRewardedVideoAdWithAdUnitID:weakSelf.adUnitID withMediationSettings:@[]];
+        [MPRewardedAds loadRewardedAdWithAdUnitID:weakSelf.adUnitID withMediationSettings:@[]];
     }];
 }
 
 - (void)showRewardedVideoFromViewController:(UIViewController *)viewController {
+    // Configuring GDPR status is done in the base class
+    if ([self configureGDPRWithClientParameters:self.clientParameters viewController:viewController]) {
+        // If MoPub is attempting to display a CMP consent dialog, we abort the ad show so we don't display an interstitial
+        // and the dialog at the same time.
+        
+        // Call failToShow delegate to reset the rewarded video for the next call.
+        NSError *error = [NSError errorWithDomain:SASMoPubAdapterErrorDomain
+                                             code:SASMoPubAdapterErrorCodeCMPDisplayed
+                                         userInfo:@{ NSLocalizedDescriptionKey: @"The MoPub CMP was displayed instead of the rewarded video ad." }];
+        [self.delegate mediationRewardedVideoAdapter:self didFailToShowWithError:error];
+        
+        return;
+    }
+    
     if ([self isRewardedVideoReady]) {
-        NSArray *rewards = [MPRewardedVideo availableRewardsForAdUnitID:self.adUnitID];
-        [MPRewardedVideo presentRewardedVideoAdForAdUnitID:self.adUnitID fromViewController:viewController withReward:rewards.firstObject];
+        NSArray *rewards = [MPRewardedAds availableRewardsForAdUnitID:self.adUnitID];
+        [MPRewardedAds presentRewardedAdForAdUnitID:self.adUnitID fromViewController:viewController withReward:rewards.firstObject];
     }
 }
 
 - (BOOL)isRewardedVideoReady {
-    return [MPRewardedVideo hasAdAvailableForAdUnitID:self.adUnitID];
+    return [MPRewardedAds hasAdAvailableForAdUnitID:self.adUnitID];
 }
 
 #pragma mark - MoPub banner delegate
 
-- (void)rewardedVideoAdDidLoadForAdUnitID:(NSString *)adUnitID {
+- (void)rewardedAdDidLoadForAdUnitID:(NSString *)adUnitID {
     if ([adUnitID isEqualToString:self.adUnitID]) {
         [self.delegate mediationRewardedVideoAdapterDidLoad:self];
     }
 }
 
-- (void)rewardedVideoAdDidFailToLoadForAdUnitID:(NSString *)adUnitID error:(NSError *)error {
+- (void)rewardedAdDidFailToLoadForAdUnitID:(NSString *)adUnitID error:(NSError *)error {
     if ([adUnitID isEqualToString:self.adUnitID]) {
         [self.delegate mediationRewardedVideoAdapter:self didFailToLoadWithError:error noFill:YES];
         // Since there is no documented way to know if the error is due to a 'no fill', we send YES for this parameter
     }
 }
 
-- (void)rewardedVideoAdDidFailToPlayForAdUnitID:(NSString *)adUnitID error:(NSError *)error {
+- (void)rewardedAdDidFailToShowForAdUnitID:(NSString *)adUnitID error:(NSError *)error {
     if ([adUnitID isEqualToString:self.adUnitID]) {
         [self.delegate mediationRewardedVideoAdapter:self didFailToShowWithError:error];
     }
 }
 
-- (void)rewardedVideoAdDidAppearForAdUnitID:(NSString *)adUnitID {
+- (void)rewardedAdDidPresentForAdUnitID:(NSString *)adUnitID {
     if ([adUnitID isEqualToString:self.adUnitID]) {
         [self.delegate mediationRewardedVideoAdapterDidShow:self];
     }
 }
 
-- (void)rewardedVideoAdDidDisappearForAdUnitID:(NSString *)adUnitID {
+- (void)rewardedAdDidDismissForAdUnitID:(NSString *)adUnitID {
     if ([adUnitID isEqualToString:self.adUnitID]) {
         [self.delegate mediationRewardedVideoAdapterDidClose:self];
     }
 }
 
-- (void)rewardedVideoAdDidReceiveTapEventForAdUnitID:(NSString *)adUnitID {
+- (void)rewardedAdDidReceiveTapEventForAdUnitID:(NSString *)adUnitID {
     if ([adUnitID isEqualToString:self.adUnitID]) {
         [self.delegate mediationRewardedVideoAdapterDidReceiveAdClickedEvent:self];
     }
 }
 
-- (void)rewardedVideoAdShouldRewardForAdUnitID:(NSString *)adUnitID reward:(MPRewardedVideoReward *)reward {
+- (void)rewardedAdShouldRewardForAdUnitID:(NSString *)adUnitID reward:(MPReward *)reward {
     if ([adUnitID isEqualToString:self.adUnitID]) {
         [self.delegate mediationRewardedVideoAdapter:self didCollectReward:[[SASReward alloc] initWithAmount:reward.amount currency:reward.currencyType]];
     }
