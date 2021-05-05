@@ -36,7 +36,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (void)showRewardedVideoFromViewController:(nonnull UIViewController *)viewController {
-    [self.optInVideo showInViewController:viewController];
+    [self.optInVideo showAdInViewController:viewController];
 }
 
 - (BOOL)isRewardedVideoReady {

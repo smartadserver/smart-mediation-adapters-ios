@@ -36,7 +36,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (void)showInterstitialFromViewController:(UIViewController *)viewController {
-    [self.interstitial showInViewController:viewController];
+    [self.interstitial showAdInViewController:viewController];
 }
 
 - (BOOL)isInterstitialReady {
