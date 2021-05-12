@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)configureOgurySDKWithServerParameterString:(NSString *)serverParameterString
                                andClientParameters:(NSDictionary *)clientParameters
-                                 completionHandler:(void(^)(NSError * _Nullable))completionHandler {
+                                 completionHandler:(void(^)(NSError * _Nullable))completionHandler {    
     // Retrieve the asset key and the ad unit id
     NSArray *serverParameters = [serverParameterString componentsSeparatedByString:@"|"];
     
@@ -66,13 +66,6 @@ NS_ASSUME_NONNULL_BEGIN
         size.topMargin = [serverParameters[5] integerValue];
         
         self.thumbnailSize = size;
-    }
- 
-    // Retrieving IAB TCF Consent String v2 from shared preferences
-    NSString *tcfString = [[NSUserDefaults standardUserDefaults] objectForKey:@"IABTCF_TCString"];
-    if (tcfString != nil) {
-        // Setting the TCF string on the Ogury SDK
-        [OguryChoiceManagerExternal setConsentForTCFV2WithAssetKey:assetKey iabString:tcfString andNonIABVendorsAccepted:@[]];
     }
     
     // Initializing Ogury SDK
