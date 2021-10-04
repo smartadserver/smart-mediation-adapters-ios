@@ -17,12 +17,11 @@ Available _subspecs_ are:
 
 | Subspec name | Supported SDK version | Comments |
 | ------------ | --------------------- | -------- |
-| ```AdColony``` | ~> 3.3.0 | _n/a_ |
+| ```AdColony``` | ~> 3.3.4 | _n/a_ |
 | ```AppLovin``` | ~> 6.2.0 | _n/a_ |
-| ```FacebookAudienceNetwork``` | ~> 6.3.0 | _n/a_ |
-| ```GoogleMobileAds``` | ~> 8.1.0 | _n/a_ |
+| ```GoogleMobileAds``` | ~> 8.8.0 | _n/a_ |
 | ```InMobi``` | ~> 7.2.0 | _n/a_ |
-| ```MoPub``` | ~> 5.16.2 | _n/a_ |
+| ```MoPub``` | ~> 5.18.0 | _n/a_ |
 | ```Ogury``` | ~> 1.3.5 | _n/a_ |
 | ```Tapjoy``` | ~> 12.8.0 | _n/a_ |
 | ```Vungle``` | ~> 6.9.1 | _n/a_ |
