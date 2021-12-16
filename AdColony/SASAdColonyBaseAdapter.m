@@ -30,29 +30,6 @@ NS_ASSUME_NONNULL_BEGIN
     return YES;
 }
 
-- (AdColonyAppOptions *)optionsFromClientParameters:(NSDictionary *)clientParameters {
-    // An option object is required to send the right GDPR info.
-    AdColonyAppOptions *options = [[AdColonyAppOptions alloc] init];
-    options.gdprRequired = [[clientParameters objectForKey:SASMediationClientParameterGDPRApplies] boolValue];
-    
-    // Use binary consent for the moment, will use real consent string later.
-    // options.gdprConsentString = [clientParameters objectForKey:SASMediationClientParameterGDPRConsent];
-    
-    // Due to the fact that AdColony is not IAB compliant, it does not accept IAB Consent String, but only a
-    // binary consent status.
-    // Smart advises app developers to store the binary consent in the 'Smart_advertisingConsentStatus' key
-    // in NSUserDefault, therefore this adapter will retrieve it from this key.
-    // Adapt the code below if your app don't follow this convention.
-    NSString *storedBinaryConsentForAdvertising = [[NSUserDefaults standardUserDefaults] objectForKey:@"Smart_advertisingConsentStatus"];
-    if (storedBinaryConsentForAdvertising && [storedBinaryConsentForAdvertising isEqualToString:@"1"]) {
-        options.gdprConsentString = @"1";
-    } else {
-        options.gdprConsentString = @"0";
-    }
-    
-    return options;
-}
-
 @end
 
 NS_ASSUME_NONNULL_END

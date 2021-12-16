@@ -60,7 +60,7 @@ NS_ASSUME_NONNULL_BEGIN
     self.placementID = [serverParameters[1] longLongValue];
     
     // Init InMobi SDK
-    [IMSdk initWithAccountID:accountID consentDictionary:consentDictionary];
+    [IMSdk initWithAccountID:accountID consentDictionary:consentDictionary andCompletionHandler:nil];
     [IMSdk setLogLevel:kIMSDKLogLevelNone];
     
     return YES;

@@ -32,19 +32,9 @@
         return;
     }
     
-    // AdColony options
-    AdColonyAppOptions *options = [self optionsFromClientParameters:clientParameters];
-    
     // Loading the ad
-    __weak typeof(self) weakSelf = self;
-    [AdColony configureWithAppID:self.appID zoneIDs:@[self.zoneID] options:options completion:^(NSArray<AdColonyZone *>* zones) {
-        
-        [AdColony requestInterstitialInZone:self.zoneID options:nil success:^(AdColonyInterstitial *ad) {
-            [weakSelf interstitialDidFinishLoading:ad];
-        } failure:^(AdColonyAdRequestError *error) {
-            [weakSelf interstitialDidFailWithError:error];
-        }];
-        
+    [AdColony configureWithAppID:self.appID zoneIDs:@[self.zoneID] options:nil completion:^(NSArray<AdColonyZone *>* zones) {
+        [AdColony requestInterstitialInZone:self.zoneID options:nil andDelegate:self];
     }];
     
 }
@@ -58,33 +48,24 @@
     return self.interstitial != nil;
 }
 
-#pragma mark - Ad events
+#pragma mark - AdColonyInterstitialDelegate implementation
 
-- (void)interstitialDidFinishLoading:(AdColonyInterstitial *)ad {
-    self.interstitial = ad;
-    
-    __weak typeof(self) weakSelf = self;
-    self.interstitial.close = ^{
-        [weakSelf interstitialDidClose];
-    };
-    self.interstitial.click = ^{
-        [weakSelf interstitialDidReceiveClickEvent];
-    };
-    
-    [self.delegate mediationInterstitialAdapterDidLoad:self];
-}
-
-- (void)interstitialDidFailWithError:(AdColonyAdRequestError *)error {
+- (void)adColonyInterstitialDidFailToLoad:(AdColonyAdRequestError * _Nonnull)error {
     [self.delegate mediationInterstitialAdapter:self didFailToLoadWithError:error noFill:YES];
     // Since there is no documented way to to tell if the error is a 'no fill', we always send YES for this parameter.
 }
 
-- (void)interstitialDidClose {
+- (void)adColonyInterstitialDidLoad:(AdColonyInterstitial * _Nonnull)interstitial {
+    self.interstitial = interstitial;
+    [self.delegate mediationInterstitialAdapterDidLoad:self];
+}
+
+- (void)adColonyInterstitialDidClose:(AdColonyInterstitial *)interstitial {
     self.interstitial = nil;
     [self.delegate mediationInterstitialAdapterDidClose:self];
 }
 
-- (void)interstitialDidReceiveClickEvent {
+- (void)adColonyInterstitialDidReceiveClick:(AdColonyInterstitial *)interstitial {
     [self.delegate mediationInterstitialAdapterDidReceiveAdClickedEvent:self];
 }
 

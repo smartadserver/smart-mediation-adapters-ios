@@ -96,7 +96,7 @@ NS_ASSUME_NONNULL_BEGIN
     }
 }
 
-- (void)vungleWillCloseAdWithViewInfo:(VungleViewInfo *)info placementID:(NSString *)placementID {
+- (void)vungleWillCloseAdForPlacementID:(NSString *)placementID {
     [self.delegate mediationInterstitialAdapterDidClose:self];
 }
 

@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
  To use an adapter class, you simply have to add them to your Xcode project and they will
  be automatically instantiated by the Smart SDK if needed.
  */
-@interface SASAdColonyRewardedVideoAdapter : SASAdColonyBaseAdapter <SASMediationRewardedVideoAdapter>
+@interface SASAdColonyRewardedVideoAdapter : SASAdColonyBaseAdapter <SASMediationRewardedVideoAdapter, AdColonyInterstitialDelegate>
 
 /// A delegate that this adapter must call to provide information about the ad loading status or events to the Smart SDK.
 @property (nonatomic, weak) id<SASMediationRewardedVideoAdapterDelegate> delegate;

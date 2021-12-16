@@ -34,12 +34,9 @@ NS_ASSUME_NONNULL_BEGIN
         return;
     }
     
-    // AdColony options
-    AdColonyAppOptions *options = [self optionsFromClientParameters:clientParameters];
-    
     // Loading the ad
     __weak typeof(self) weakSelf = self;
-    [AdColony configureWithAppID:self.appID zoneIDs:@[self.zoneID] options:options completion:^(NSArray<AdColonyZone *>* zones) {
+    [AdColony configureWithAppID:self.appID zoneIDs:@[self.zoneID] options:nil completion:^(NSArray<AdColonyZone *>* zones) {
         
         // Fetching reward
         AdColonyZone *zone = [zones firstObject];
@@ -50,14 +47,9 @@ NS_ASSUME_NONNULL_BEGIN
         };
         
         // Ad loading
-        [AdColony requestInterstitialInZone:self.zoneID options:nil success:^(AdColonyInterstitial *ad) {
-            [weakSelf rewardedVideoDidFinishLoading:ad];
-        } failure:^(AdColonyAdRequestError *error) {
-            [weakSelf rewardedVideoDidFailWithError:error];
-        }];
+        [AdColony requestInterstitialInZone:self.zoneID options:nil andDelegate:self];
         
     }];
-    
 }
 
 - (void)showRewardedVideoFromViewController:(UIViewController *)viewController {
@@ -69,39 +61,32 @@ NS_ASSUME_NONNULL_BEGIN
     return self.interstitial != nil;
 }
 
-#pragma mark - Ad events
+#pragma mark - AdColonyInterstitialDelegate implementation
 
-- (void)rewardedVideoDidFinishLoading:(AdColonyInterstitial *)ad {
-    self.interstitial = ad;
-    
-    __weak typeof(self) weakSelf = self;
-    self.interstitial.close = ^{
-        [weakSelf rewardedVideoDidClose];
-    };
-    self.interstitial.click = ^{
-        [weakSelf rewardedVideoDidReceiveClickEvent];
-    };
-    
-    [self.delegate mediationRewardedVideoAdapterDidLoad:self];
-}
-
-- (void)rewardedVideoDidFailWithError:(AdColonyAdRequestError *)error {
+- (void)adColonyInterstitialDidFailToLoad:(AdColonyAdRequestError * _Nonnull)error {
     [self.delegate mediationRewardedVideoAdapter:self didFailToLoadWithError:error noFill:YES];
     // Since there is no documented way to to tell if the error is a 'no fill', we always send YES for this parameter.
 }
 
-- (void)rewardedVideoDidCollectRewardWithCurrency:(NSString *)currency amount:(int)amount {
-    SASReward *reward = [[SASReward alloc] initWithAmount:[NSNumber numberWithInteger:amount] currency:currency];
-    [self.delegate mediationRewardedVideoAdapter:self didCollectReward:reward];
+- (void)adColonyInterstitialDidLoad:(AdColonyInterstitial * _Nonnull)interstitial {
+    self.interstitial = interstitial;
+    [self.delegate mediationRewardedVideoAdapterDidLoad:self];
 }
 
-- (void)rewardedVideoDidClose {
+- (void)adColonyInterstitialDidClose:(AdColonyInterstitial *)interstitial {
     self.interstitial = nil;
     [self.delegate mediationRewardedVideoAdapterDidClose:self];
 }
 
-- (void)rewardedVideoDidReceiveClickEvent {
+- (void)adColonyInterstitialDidReceiveClick:(AdColonyInterstitial *)interstitial {
     [self.delegate mediationRewardedVideoAdapterDidReceiveAdClickedEvent:self];
+}
+
+#pragma mark - Ad events
+
+- (void)rewardedVideoDidCollectRewardWithCurrency:(NSString *)currency amount:(int)amount {
+    SASReward *reward = [[SASReward alloc] initWithAmount:[NSNumber numberWithInteger:amount] currency:currency];
+    [self.delegate mediationRewardedVideoAdapter:self didCollectReward:reward];
 }
 
 @end

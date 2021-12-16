@@ -47,16 +47,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (BOOL)configureIDWithServerParameterString:(NSString *)serverParameterString error:(NSError **)error;
 
-/**
- Create an AdColony options object from the client parameters dictionary provided by Smart.
- 
- This method is mostly used to handle GDPR.
- 
- @param clientParameters The client parameters dictionary provided by Smart.
- @return An AdColony options object.
- */
-- (AdColonyAppOptions *)optionsFromClientParameters:(NSDictionary *)clientParameters;
-
 @end
 
 NS_ASSUME_NONNULL_END
