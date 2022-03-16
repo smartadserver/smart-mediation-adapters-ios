@@ -19,7 +19,7 @@ Available _subspecs_ are:
 | ------------ | --------------------- | -------- |
 | ```AdColony``` | ~> 4.7.2 | _n/a_ |
 | ```AppLovin``` | ~> 6.2.0 | _n/a_ |
-| ```GoogleMobileAds``` | ~> 8.13.0 | _n/a_ |
+| ```GoogleMobileAds``` | ~> 9.1.0 | _n/a_ |
 | ```InMobi``` | ~> 10.0.1 | _n/a_ |
 | ```MoPub``` | ~> 5.18.2 | _n/a_ |
 | ```Ogury``` | ~> 1.5.1 | _n/a_ |

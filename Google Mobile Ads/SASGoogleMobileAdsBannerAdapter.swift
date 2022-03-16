@@ -44,10 +44,10 @@ class SASGoogleMobileAdsBannerAdapter : SASGoogleMobileAdsBaseAdapter, SASMediat
             
             let adSize = bannerSize(serverParameterString: serverParameterString)
             switch (gmaType) {
-            case .adManager:
-                bannerView = GAMBannerView(adSize: adSize)
-            default:
-                bannerView = GADBannerView(adSize: adSize)
+                case .adManager:
+                    bannerView = GAMBannerView(adSize: adSize)
+                default:
+                    bannerView = GADBannerView(adSize: adSize)
             }
             
             // Banner configuration
@@ -71,18 +71,18 @@ class SASGoogleMobileAdsBannerAdapter : SASGoogleMobileAdsBaseAdapter, SASMediat
         
         // Extracting banner size
         guard serverParameters.count > 2, let bannerSizeInt = Int(serverParameters[2]) else {
-            return kGADAdSizeBanner
+            return GADAdSizeBanner
         }
         
         switch (bannerSizeInt) {
         case 1:
-            return kGADAdSizeMediumRectangle
+            return GADAdSizeMediumRectangle
         case 2:
-            return kGADAdSizeLeaderboard
+            return GADAdSizeLeaderboard
         case 3:
-            return kGADAdSizeLargeBanner
+            return GADAdSizeLargeBanner
         default:
-            return kGADAdSizeBanner
+            return GADAdSizeBanner
         }
         
     }

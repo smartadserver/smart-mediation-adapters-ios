@@ -130,16 +130,9 @@ class SASGoogleMobileAdsBaseAdapter : NSObject {
         let request = T()
         
         // Test ads will be returned for devices with device IDs specified in this array.
-        //GADMobileAds.sharedInstance().requestConfiguration.testDeviceIdentifiers = [ kGADSimulatorID /* other UDIDs here */ ]
-        GADMobileAds.sharedInstance().requestConfiguration.testDeviceIdentifiers = [ "93e5ef3ee6323ea55e9886409d6fd24b" ]
+        GADMobileAds.sharedInstance().requestConfiguration.testDeviceIdentifiers = [ GADSimulatorID /* other test devices can be added here */ ]
 
         request.requestAgent = "SmartAdServer"
-        
-        if let location = clientParameters[SASMediationClientParameterLocation] as? CLLocation {
-            request.setLocationWithLatitude(CGFloat(location.coordinate.latitude),
-                                                longitude: CGFloat(location.coordinate.longitude),
-                                                accuracy: CGFloat(location.horizontalAccuracy))
-        }
         
         // Configure additional parameters if necessary (GDPR info)
         if let additionalParameters = additionalParameters(clientParameters: clientParameters) {

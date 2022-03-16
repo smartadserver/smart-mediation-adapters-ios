@@ -103,7 +103,7 @@ extension SASGoogleMobileAdsInterstitialAdapter : GADFullScreenContentDelegate {
         delegate?.mediationInterstitialAdapter(self, didFailToShowWithError: error)
     }
     
-    func adDidPresentFullScreenContent(_ ad: GADFullScreenPresentingAd) {
+    func adWillPresentFullScreenContent(_ ad: GADFullScreenPresentingAd) {
         delegate?.mediationInterstitialAdapterDidShow(self)
     }
     

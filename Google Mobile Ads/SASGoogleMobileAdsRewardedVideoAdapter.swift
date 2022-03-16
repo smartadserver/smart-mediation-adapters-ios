@@ -108,7 +108,7 @@ extension SASGoogleMobileAdsRewardedVideoAdapter : GADFullScreenContentDelegate 
         delegate?.mediationRewardedVideoAdapter(self, didFailToShowWithError: error)
     }
     
-    func adDidPresentFullScreenContent(_ ad: GADFullScreenPresentingAd) {
+    func adWillPresentFullScreenContent(_ ad: GADFullScreenPresentingAd) {
         delegate?.mediationRewardedVideoAdapterDidShow(self)
     }
     
