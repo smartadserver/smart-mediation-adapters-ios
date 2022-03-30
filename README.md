@@ -18,7 +18,7 @@ Available _subspecs_ are:
 | Subspec name | Supported SDK version | Comments |
 | ------------ | --------------------- | -------- |
 | ```AdColony``` | ~> 4.7.2 | _n/a_ |
-| ```AppLovin``` | ~> 6.2.0 | _n/a_ |
+| ```AppLovin``` | ~> 11.3.1 | _n/a_ |
 | ```GoogleMobileAds``` | ~> 9.1.0 | _n/a_ |
 | ```InMobi``` | ~> 10.0.1 | _n/a_ |
 | ```MoPub``` | ~> 5.18.2 | _n/a_ |
