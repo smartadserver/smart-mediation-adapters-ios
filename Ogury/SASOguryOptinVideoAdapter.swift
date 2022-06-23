@@ -25,8 +25,8 @@ class SASOguryOptinVideoAdapter : SASOguryBaseAdapter, SASMediationRewardedVideo
     /// A delegate that this adapter must call to provide information about the ad loading status or events to the Smart Display SDK.
     private weak var delegate: SASMediationRewardedVideoAdapterDelegate? = nil
     
-    /// The currently loaded Ogury Optin Video, if any.
-    private var optInVideo: OguryAdsOptinVideo? = nil
+    /// The currently loaded Ogury Optin Video if any, nil otherwise.
+    private var optInVideo: OguryOptinVideoAd? = nil
     
     /// The current reward if any.
     private var reward: SASReward? = nil
@@ -45,8 +45,8 @@ class SASOguryOptinVideoAdapter : SASOguryBaseAdapter, SASMediationRewardedVideo
                 delegate?.mediationRewardedVideoAdapter(self, didFailToLoadWithError: error, noFill: false)
             } else {
                 // Optin video instantiation and loading
-                optInVideo = OguryAdsOptinVideo(adUnitID: adUnitId)
-                optInVideo?.optInVideoDelegate = self
+                optInVideo = OguryOptinVideoAd(adUnitId: adUnitId!)
+                optInVideo?.delegate = self
                 
                 optInVideo?.load()
             }
@@ -54,12 +54,12 @@ class SASOguryOptinVideoAdapter : SASOguryBaseAdapter, SASMediationRewardedVideo
     }
     
     func showRewardedVideo(from viewController: UIViewController) {
-        optInVideo?.showAd(in: viewController)
+        optInVideo?.show(in: viewController)
     }
     
     func isRewardedVideoReady() -> Bool {
         if let optInVideo = optInVideo {
-            return optInVideo.isLoaded
+            return optInVideo.isLoaded()
         } else {
             return false
         }
@@ -70,37 +70,21 @@ class SASOguryOptinVideoAdapter : SASOguryBaseAdapter, SASMediationRewardedVideo
 /**
  Ogury delegate implementation.
  */
-extension SASOguryOptinVideoAdapter : OguryAdsOptinVideoDelegate {
+extension SASOguryOptinVideoAdapter : OguryOptinVideoAdDelegate {
     
-    func oguryAdsOptinVideoAdAvailable() { }
-    
-    func oguryAdsOptinVideoAdNotAvailable() {
-        let error = NSError(
-            domain: ErrorConstants.errorDomain,
-            code: ErrorConstants.errorCodeAdNotAvailable,
-            userInfo: [NSLocalizedDescriptionKey: "Ogury Rewarded Video - Ad not available"]
-        )
-        delegate?.mediationRewardedVideoAdapter(self, didFailToLoadWithError: error, noFill: true)
-    }
-    
-    func oguryAdsOptinVideoAdLoaded() {
+    func didLoad(_ optinVideo: OguryOptinVideoAd) {
         delegate?.mediationRewardedVideoAdapterDidLoad(self)
     }
     
-    func oguryAdsOptinVideoAdNotLoaded() {
-        let error = NSError(
-            domain: ErrorConstants.errorDomain,
-            code: ErrorConstants.errorCodeAdNotLoaded,
-            userInfo: [NSLocalizedDescriptionKey: "Ogury Rewarded Video - Ad not loaded"]
-        )
-        delegate?.mediationRewardedVideoAdapter(self, didFailToLoadWithError: error, noFill: false)
-    }
-    
-    func oguryAdsOptinVideoAdDisplayed() {
+    func didDisplay(_ optinVideo: OguryOptinVideoAd) {
         delegate?.mediationRewardedVideoAdapterDidShow(self)
     }
     
-    func oguryAdsOptinVideoAdClosed() {
+    func didClick(_ optinVideo: OguryOptinVideoAd) {
+        
+    }
+    
+    func didClose(_ optinVideo: OguryOptinVideoAd) {
         delegate?.mediationRewardedVideoAdapterDidClose(self)
         
         if let reward = reward {
@@ -108,26 +92,24 @@ extension SASOguryOptinVideoAdapter : OguryAdsOptinVideoDelegate {
         }
     }
     
-    func oguryAdsOptinVideoAdRewarded(_ item: OGARewardItem!) {
-         let formatter = NumberFormatter()
+    func didRewardOguryOptinVideoAd(with item: OGARewardItem, for optinVideo: OguryOptinVideoAd) {
+        let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
-        
+       
         if let amount = formatter.number(from: item.rewardValue) {
             reward = SASReward(amount: amount, currency: item.rewardName)
         }
     }
     
-    func oguryAdsOptinVideoAdError(_ errorType: OguryAdsErrorType) {
+    func didFailOguryOptinVideoAdWithError(_ error: OguryError, for optinVideo: OguryOptinVideoAd) {
         let error = NSError(
             domain: ErrorConstants.errorDomain,
             code: ErrorConstants.errorCodeAdError,
-            userInfo: [NSLocalizedDescriptionKey: "Ogury Rewarded Video - Ad error with type: \(errorType)"]
+            userInfo: [NSLocalizedDescriptionKey: "Ogury OptIn Video - Ad failed with error: \(error)"]
         )
         delegate?.mediationRewardedVideoAdapter(self, didFailToLoadWithError: error, noFill: false)
     }
     
-    func oguryAdsOptinVideoAdClicked() {
-        delegate?.mediationRewardedVideoAdapterDidReceiveAdClickedEvent(self)
-    }
+    func didTriggerImpressionOguryOptinVideoAd(_ optinVideo: OguryOptinVideoAd) { }
     
 }

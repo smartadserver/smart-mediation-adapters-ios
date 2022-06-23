@@ -21,7 +21,7 @@ Available _subspecs_ are:
 | ```AppLovin``` | ~> 11.3.1 | _n/a_ |
 | ```GoogleMobileAds``` | ~> 9.1.0 | _n/a_ |
 | ```InMobi``` | ~> 10.0.1 | _n/a_ |
-| ```Ogury``` | ~> 1.5.1 | _n/a_ |
+| ```Ogury``` | ~> 2.1.0 | _n/a_ |
 | ```Tapjoy``` | ~> 12.8.0 | _n/a_ |
 | ```Vungle``` | ~> 6.10.5 | _n/a_ |
 

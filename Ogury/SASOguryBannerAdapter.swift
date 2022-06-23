@@ -25,8 +25,11 @@ class SASOguryBannerAdapter: SASOguryBaseAdapter, SASMediationBannerAdapter {
     /// A delegate that this adapter must call to provide information about the ad loading status or events to the Smart Display SDK.
     private weak var delegate: SASMediationBannerAdapterDelegate? = nil
     
-    /// The currently loaded Ogury banner, if any.
-    private var banner: OguryAdsBanner? = nil
+    /// The currently loaded Ogury banner if any, nil otherwise.
+    private var banner: OguryBannerAd? = nil
+    
+    /// The view controller currently used to display the banner if any, nil otherwise.
+    private var viewController: UIViewController? = nil
     
     required init(delegate: SASMediationBannerAdapterDelegate) {
         self.delegate = delegate
@@ -34,6 +37,8 @@ class SASOguryBannerAdapter: SASOguryBaseAdapter, SASMediationBannerAdapter {
     }
     
     func requestBanner(withServerParameterString serverParameterString: String, clientParameters: [AnyHashable : Any], viewController: UIViewController) {
+        
+        self.viewController = viewController
         
         // Ogury configuration
         configureOgurySDK(serverParameterString: serverParameterString, clientParameters: clientParameters) { [self] error in
@@ -57,8 +62,8 @@ class SASOguryBannerAdapter: SASOguryBaseAdapter, SASMediationBannerAdapter {
                 }
                 
                 // Banner loading
-                banner = OguryAdsBanner(adUnitID: adUnitId)
-                banner?.bannerDelegate = self
+                banner = OguryBannerAd(adUnitId: adUnitId!)
+                banner?.delegate = self
                 
                 // Banner resizing to the size of the Smart banner view
                 if let smartBannerSize = (clientParameters[SASMediationClientParameterAdViewSize] as? NSValue)?.cgSizeValue {
@@ -75,47 +80,33 @@ class SASOguryBannerAdapter: SASOguryBaseAdapter, SASMediationBannerAdapter {
 /**
  Ogury delegate implementation.
  */
-extension SASOguryBannerAdapter : OguryAdsBannerDelegate {
+extension SASOguryBannerAdapter : OguryBannerAdDelegate {
     
-    func oguryAdsBannerAdAvailable(_ bannerAds: OguryAdsBanner!) { }
-    
-    func oguryAdsBannerAdNotAvailable(_ bannerAds: OguryAdsBanner!) {
-        let error = NSError(
-            domain: ErrorConstants.errorDomain,
-            code: ErrorConstants.errorCodeAdNotAvailable,
-            userInfo: [NSLocalizedDescriptionKey: "Ogury Banner - Ad not available"]
-        )
-        delegate?.mediationBannerAdapter(self, didFailToLoadWithError: error, noFill: true)
+    func didLoad(_ banner: OguryBannerAd) {
+        delegate?.mediationBannerAdapter(self, didLoadBanner: banner)
     }
     
-    func oguryAdsBannerAdLoaded(_ bannerAds: OguryAdsBanner!) {
-        delegate?.mediationBannerAdapter(self, didLoadBanner: bannerAds)
-    }
+    func didDisplay(_ banner: OguryBannerAd) { }
     
-    func oguryAdsBannerAdNotLoaded(_ bannerAds: OguryAdsBanner!) {
-        let error = NSError(
-            domain: ErrorConstants.errorDomain,
-            code: ErrorConstants.errorCodeAdNotLoaded,
-            userInfo: [NSLocalizedDescriptionKey: "Ogury Banner - Ad not loaded"]
-        )
-        delegate?.mediationBannerAdapter(self, didFailToLoadWithError: error, noFill: false)
-    }
-    
-    func oguryAdsBannerAdDisplayed(_ bannerAds: OguryAdsBanner!) { }
-    
-    func oguryAdsBannerAdClosed(_ bannerAds: OguryAdsBanner!) { }
-    
-    func oguryAdsBannerAdClicked(_ bannerAds: OguryAdsBanner!) {
+    func didClick(_ banner: OguryBannerAd) {
         delegate?.mediationBannerAdapterDidReceiveAdClickedEvent(self)
     }
     
-    func oguryAdsBannerAdError(_ errorType: OguryAdsErrorType, for bannerAds: OguryAdsBanner!) {
+    func didClose(_ banner: OguryBannerAd) { }
+    
+    func didFailOguryBannerAdWithError(_ error: OguryError, for banner: OguryBannerAd) {
         let error = NSError(
             domain: ErrorConstants.errorDomain,
             code: ErrorConstants.errorCodeAdError,
-            userInfo: [NSLocalizedDescriptionKey: "Ogury Banner - Ad error with type: \(errorType)"]
+            userInfo: [NSLocalizedDescriptionKey: "Ogury Banner - Ad failed with error: \(error)"]
         )
-        delegate?.mediationBannerAdapter(self, didFailToLoadWithError: error, noFill: false)
+        delegate?.mediationBannerAdapter(self, didFailToLoadWithError: error, noFill: (error.code == ErrorConstants.oguryNoAdErrorCode))
+    }
+    
+    func didTriggerImpressionOguryBannerAd(_ banner: OguryBannerAd) { }
+
+    func presentingViewController(forOguryAdsBannerAd banner: OguryBannerAd) -> UIViewController {
+        return viewController!;
     }
     
 }

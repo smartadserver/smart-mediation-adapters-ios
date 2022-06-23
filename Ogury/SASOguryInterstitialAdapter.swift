@@ -25,8 +25,8 @@ class SASOguryInterstitialAdapter: SASOguryBaseAdapter, SASMediationInterstitial
     /// A delegate that this adapter must call to provide information about the ad loading status or events to the Smart Display SDK.
     private weak var delegate: SASMediationInterstitialAdapterDelegate? = nil
     
-    /// The currently loaded Ogury banner, if any.
-    private var interstitial: OguryAdsInterstitial? = nil
+    /// The currently loaded Ogury interstitial if any, nil otherwise.
+    private var interstitial: OguryInterstitialAd? = nil
     
     required init(delegate: SASMediationInterstitialAdapterDelegate) {
         self.delegate = delegate
@@ -41,8 +41,8 @@ class SASOguryInterstitialAdapter: SASOguryBaseAdapter, SASMediationInterstitial
                 delegate?.mediationInterstitialAdapter(self, didFailToLoadWithError: error, noFill: false)
             } else {
                 // Interstitial instantiation and loading
-                interstitial = OguryAdsInterstitial(adUnitID: adUnitId)
-                interstitial?.interstitialDelegate = self
+                interstitial = OguryInterstitialAd(adUnitId: adUnitId!)
+                interstitial?.delegate = self
                 
                 interstitial?.load()
             }
@@ -50,12 +50,12 @@ class SASOguryInterstitialAdapter: SASOguryBaseAdapter, SASMediationInterstitial
     }
     
     func showInterstitial(from viewController: UIViewController) {
-        interstitial?.showAd(in: viewController)
+        interstitial?.show(in: viewController)
     }
     
     func isInterstitialReady() -> Bool {
         if let interstitial = interstitial {
-            return interstitial.isLoaded
+            return interstitial.isLoaded()
         } else {
             return false
         }
@@ -66,51 +66,33 @@ class SASOguryInterstitialAdapter: SASOguryBaseAdapter, SASMediationInterstitial
 /**
  Ogury delegate implementation.
  */
-extension SASOguryInterstitialAdapter: OguryAdsInterstitialDelegate {
+extension SASOguryInterstitialAdapter: OguryInterstitialAdDelegate {
     
-    func oguryAdsInterstitialAdAvailable() { }
-    
-    func oguryAdsInterstitialAdNotAvailable() {
-        let error = NSError(
-            domain: ErrorConstants.errorDomain,
-            code: ErrorConstants.errorCodeAdNotAvailable,
-            userInfo: [NSLocalizedDescriptionKey: "Ogury Interstitial - Ad not available"]
-        )
-        delegate?.mediationInterstitialAdapter(self, didFailToLoadWithError: error, noFill: true)
-    }
-    
-    func oguryAdsInterstitialAdLoaded() {
+    func didLoad(_ interstitial: OguryInterstitialAd) {
         delegate?.mediationInterstitialAdapterDidLoad(self)
     }
     
-    func oguryAdsInterstitialAdNotLoaded() {
-        let error = NSError(
-            domain: ErrorConstants.errorDomain,
-            code: ErrorConstants.errorCodeAdNotLoaded,
-            userInfo: [NSLocalizedDescriptionKey: "Ogury Interstitial - Ad not loaded"]
-        )
-        delegate?.mediationInterstitialAdapter(self, didFailToLoadWithError: error, noFill: false)
-    }
-    
-    func oguryAdsInterstitialAdDisplayed() {
+    func didDisplay(_ interstitial: OguryInterstitialAd) {
         delegate?.mediationInterstitialAdapterDidShow(self)
     }
     
-    func oguryAdsInterstitialAdClosed() {
+    func didClick(_ interstitial: OguryInterstitialAd) {
+        delegate?.mediationInterstitialAdapterDidReceiveAdClickedEvent(self)
+    }
+    
+    func didClose(_ interstitial: OguryInterstitialAd) {
         delegate?.mediationInterstitialAdapterDidClose(self)
     }
     
-    func oguryAdsInterstitialAdError(_ errorType: OguryAdsErrorType) {
+    func didFailOguryInterstitialAdWithError(_ error: OguryError, for interstitial: OguryInterstitialAd) {
         let error = NSError(
             domain: ErrorConstants.errorDomain,
             code: ErrorConstants.errorCodeAdError,
-            userInfo: [NSLocalizedDescriptionKey: "Ogury Interstitial - Ad error with type: \(errorType.rawValue)"]
+            userInfo: [NSLocalizedDescriptionKey: "Ogury Interstitial - Ad failed with error: \(error)"]
         )
-        delegate?.mediationInterstitialAdapter(self, didFailToLoadWithError: error, noFill: false)
+        delegate?.mediationInterstitialAdapter(self, didFailToLoadWithError: error, noFill: (error.code == ErrorConstants.oguryNoAdErrorCode))
     }
     
-    func oguryAdsInterstitialAdClicked() {
-        delegate?.mediationInterstitialAdapterDidReceiveAdClickedEvent(self)
-    }
+    func didTriggerImpressionOguryInterstitialAd(_ interstitial: OguryInterstitialAd) { }
     
 }

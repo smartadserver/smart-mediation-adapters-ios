@@ -26,7 +26,7 @@ class SASOguryThumbnailAdapter : SASOguryBaseAdapter, SASMediationBannerAdapter 
     private weak var delegate: SASMediationBannerAdapterDelegate? = nil
     
     /// The currently loaded Ogury Thumbnail, if any.
-    private var thumbnailAd: OguryAdsThumbnailAd? = nil
+    private var thumbnailAd: OguryThumbnailAd? = nil
     
     required init(delegate: SASMediationBannerAdapterDelegate) {
         self.delegate = delegate
@@ -57,8 +57,8 @@ class SASOguryThumbnailAdapter : SASOguryBaseAdapter, SASMediationBannerAdapter 
                 }
                 
                 // Thumbnail loading
-                thumbnailAd = OguryAdsThumbnailAd(adUnitID: adUnitId)
-                thumbnailAd?.thumbnailAdDelegate = self
+                thumbnailAd = OguryThumbnailAd(adUnitId: adUnitId!)
+                thumbnailAd?.delegate = self
                 
                 thumbnailAd?.load(CGSize(width: thumbnailSize.maxWidth, height: thumbnailSize.maxHeight))
             }
@@ -70,20 +70,9 @@ class SASOguryThumbnailAdapter : SASOguryBaseAdapter, SASMediationBannerAdapter 
 /**
  Ogury delegate implementation.
  */
-extension SASOguryThumbnailAdapter : OguryAdsThumbnailAdDelegate {
+extension SASOguryThumbnailAdapter : OguryThumbnailAdDelegate {    
     
-    func oguryAdsThumbnailAdAdAvailable() { }
-    
-    func oguryAdsThumbnailAdAdNotAvailable() {
-        let error = NSError(
-            domain: ErrorConstants.errorDomain,
-            code: ErrorConstants.errorCodeAdNotAvailable,
-            userInfo: [NSLocalizedDescriptionKey: "Ogury Thumbnail - Ad not available"]
-        )
-        delegate?.mediationBannerAdapter(self, didFailToLoadWithError: error, noFill: true)
-    }
-    
-    func oguryAdsThumbnailAdAdLoaded() {
+    func didLoad(_ thumbnail: OguryThumbnailAd) {
         guard let thumbnailSize = thumbnailSize else {
             return
         }
@@ -97,30 +86,23 @@ extension SASOguryThumbnailAdapter : OguryAdsThumbnailAdDelegate {
         }
     }
     
-    func oguryAdsThumbnailAdAdNotLoaded() {
-        let error = NSError(
-            domain: ErrorConstants.errorDomain,
-            code: ErrorConstants.errorCodeAdNotLoaded,
-            userInfo: [NSLocalizedDescriptionKey: "Ogury Thumbnail - Ad not loaded"]
-        )
-        delegate?.mediationBannerAdapter(self, didFailToLoadWithError: error, noFill: false)
+    func didDisplay(_ thumbnail: OguryThumbnailAd) { }
+    
+    func didClick(_ thumbnail: OguryThumbnailAd) {
+        delegate?.mediationBannerAdapterDidReceiveAdClickedEvent(self)
     }
     
-    func oguryAdsThumbnailAdAdDisplayed() { }
+    func didClose(_ thumbnail: OguryThumbnailAd) { }
     
-    func oguryAdsThumbnailAdAdClosed() { }
-    
-    func oguryAdsThumbnailAdAdError(_ errorType: OguryAdsErrorType) {
+    func didFailOguryThumbnailAdWithError(_ error: OguryError, for thumbnail: OguryThumbnailAd) {
         let error = NSError(
             domain: ErrorConstants.errorDomain,
             code: ErrorConstants.errorCodeAdError,
-            userInfo: [NSLocalizedDescriptionKey: "Ogury Thumbnail - Ad error with type: \(errorType)"]
+            userInfo: [NSLocalizedDescriptionKey: "Ogury Thumbnail - Ad failed with error: \(error)"]
         )
-        delegate?.mediationBannerAdapter(self, didFailToLoadWithError: error, noFill: false)
+        delegate?.mediationBannerAdapter(self, didFailToLoadWithError: error, noFill: (error.code == ErrorConstants.oguryNoAdErrorCode))
     }
     
-    func oguryAdsThumbnailAdAdClicked() {
-        delegate?.mediationBannerAdapterDidReceiveAdClickedEvent(self)
-    }
+    func didTriggerImpressionOguryThumbnailAd(_ thumbnail: OguryThumbnailAd) { }
     
 }

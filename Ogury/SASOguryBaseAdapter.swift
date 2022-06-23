@@ -9,6 +9,7 @@
 import UIKit
 import SASDisplayKit
 import OguryAds
+import OgurySdk
 
 /**
  Ogury base adapter class for Smart SDK mediation.
@@ -32,6 +33,8 @@ class SASOguryBaseAdapter: NSObject {
         static let errorCodeAdNotLoaded = 3
         static let errorCodeAdError = 4
         static let errorCodeCannotInitializeOgurySDK = 5
+        
+        static let oguryNoAdErrorCode = 2008
     }
     
     /**
@@ -120,20 +123,11 @@ class SASOguryBaseAdapter: NSObject {
         }
         
         // Initializing Ogury SDK
-        OguryAds.shared().setup(withAssetKey: assetKey) { error in
-            DispatchQueue.main.async {
-                if let error = error {
-                    completion(NSError(
-                        domain: ErrorConstants.errorDomain,
-                        code: ErrorConstants.errorCodeCannotInitializeOgurySDK,
-                        userInfo: [NSLocalizedDescriptionKey: "Ogury SDK returned error: \(error)"]
-                    ))
-                } else {
-                    // Ogury has been successfully initialized
-                    completion(nil)
-                }
-            }
-        }
+        let oguryConfiguration = OguryConfigurationBuilder(assetKey: assetKey).build()
+        Ogury.start(with: oguryConfiguration)
+        
+        // Ogury has been successfully initialized
+        completion(nil)
     }
     
 }
