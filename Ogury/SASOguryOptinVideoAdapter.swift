@@ -81,7 +81,7 @@ extension SASOguryOptinVideoAdapter : OguryOptinVideoAdDelegate {
     }
     
     func didClick(_ optinVideo: OguryOptinVideoAd) {
-        
+        delegate?.mediationRewardedVideoAdapterDidReceiveAdClickedEvent(self)
     }
     
     func didClose(_ optinVideo: OguryOptinVideoAd) {

@@ -21,14 +21,11 @@ Available _subspecs_ are:
 | ```AppLovin``` | ~> 11.3.1 | _n/a_ |
 | ```GoogleMobileAds``` | ~> 9.1.0 | _n/a_ |
 | ```InMobi``` | ~> 10.0.1 | _n/a_ |
-| ```Ogury``` | ~> 2.1.0 | _n/a_ |
+| ```Ogury``` | ~> 4.0.0 | _n/a_ |
 | ```Tapjoy``` | ~> 12.8.0 | _n/a_ |
 | ```Vungle``` | ~> 6.10.5 | _n/a_ |
 
 __Note:__ if you install the pod _Smart-Display-SDK-With-Mediation_ without specifying any _subspec_, only the __Smart Display SDK__ will be installed.
-
-
-
 
 ## Manual installation
 
