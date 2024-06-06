@@ -7,7 +7,7 @@
 //
 
 #import "SASInMobiBaseAdapter.h"
-#import <SASDisplayKit/SASdisplayKit.h>
+#import <SASDisplayKit/SASDisplayKit.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

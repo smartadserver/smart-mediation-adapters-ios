@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <InMobiSDK/InMobiSDK.h>
-#import <SASDisplayKit/SASdisplayKit.h>
+#import <SASDisplayKit/SASDisplayKit.h>
 
 #define SmartAdvertisingConsentStatusStorageKey             @"Smart_advertisingConsentStatus"
 #define SASInMobiAdapterErrorDomain                         @"SASInMobiAdapter"

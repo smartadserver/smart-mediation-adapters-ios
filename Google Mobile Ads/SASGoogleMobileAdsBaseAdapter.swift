@@ -129,9 +129,6 @@ class SASGoogleMobileAdsBaseAdapter : NSObject {
         // Creating an Google Mobile Ads ad request
         let request = T()
         
-        // Test ads will be returned for devices with device IDs specified in this array.
-        GADMobileAds.sharedInstance().requestConfiguration.testDeviceIdentifiers = [ GADSimulatorID /* other test devices can be added here */ ]
-
         request.requestAgent = "SmartAdServer"
         
         // Configure additional parameters if necessary (GDPR info)
