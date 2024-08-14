@@ -1,6 +1,7 @@
 # Smart Mediation Adapters iOS
 
-This repository contains all mediation adapters we officially support.
+This repository contains all mediation adapters we officially support for the legacy __Smart Display SDK__ version 7.
+For the mediation adapters compatible with the new __Equativ Display SDK__ 8, please refer to [this repository](https://github.com/smartadserver/equativ-display-sdk-mediation-adapters-ios) instead.
 
 ## Cocoapods installation
 
